@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %l - %msg%n" />
+		</Console>
+		<File name="File" fileName="output.log" advertiseURI="file://output.log">
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %l - %msg%n" />
+		</File>
+	</Appenders>
+	<Loggers>
+		<Logger name="org" level="warn" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+		<Root level="info">
+			<AppenderRef ref="Console" level="debug"/>
+			<AppenderRef ref="File" level="error" />
+		</Root>
+	</Loggers>
+</Configuration>

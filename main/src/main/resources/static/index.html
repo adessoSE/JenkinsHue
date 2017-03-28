@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html ng-app="jenkinshue">
+  <head>
+  	<title>JenkinsHue</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <script src="https://use.fontawesome.com/beacb7a6a0.js"></script>
+    <link rel="stylesheet" type="text/css" href="wro/css/all.css" />
+    <script type="text/javascript" src="wro/js/all.js"></script>
+  </head>
+  <body class="hold-transition skin-green sidebar-mini" ng-class="{'login-page': !principal}" ng-controller="AppCtrl" ng-cloak>
+
+  	<div growl></div>
+
+    <!-- Login Page -->
+
+    <div ng-show="!principal">
+      <div class="login-box">
+        <div class="login-logo">
+          <a href="#/"><b>Jenkins</b>Hue</a>
+        </div><!-- /.login-logo -->
+        <div class="login-box-body">
+          <p class="login-box-msg">Bitte einloggen</p>
+          <form ng-submit="login()">
+            <div class="form-group has-feedback">
+              <input type="text" class="form-control" placeholder="Benutzername" ng-model="credentials.username" required="required" autofocus="autofocus">
+              <span class="glyphicon glyphicon-user form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+              <input type="password" class="form-control" placeholder="Passwort" ng-model="credentials.password" required="required">
+              <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+            </div>
+            <div class="form-group row">
+              <div class="col-md-7 col-xs-0"></div>
+              <div class="col-md-5 col-xs-12">
+                <button type="submit" class="btn btn-primary btn-block btn-flat">Einloggen</button>
+              </div><!-- /.col -->
+            </div>
+          </form>
+        </div><!-- /.login-box-body -->
+      </div><!-- /.login-box -->
+    </div>
+
+
+    <!-- Normal Content -->
+
+    <div class="wrapper" ng-show="principal">
+
+      <header class="main-header" ng-show="principal">
+
+        <!-- Logo -->
+        <a ng-href="#/dashboard" class="logo">
+          <!-- mini logo for sidebar mini 50x50 pixels -->
+          <span class="logo-mini">JH</span>
+          <!-- logo for regular state and mobile devices -->
+          <span class="logo-lg"><b>Jenkins</b>Hue</span>
+        </a>
+
+        <nav class="navbar navbar-static-top" role="navigation" ng-show="principal">
+          <!-- Sidebar toggle button-->
+          <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+          </a>
+
+          <!-- Navbar Right Menu -->
+          <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+              <li class="jh-username">Eingeloggt als <strong>{{ principal.username }}</strong></li>
+              <li class="user-menu">
+                <a ng-href="#/" ng-click="logout()"><i class="fa fa-sign-out"></i> Logout</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+
+      <nav class="main-sidebar">
+        <section class="sidebar">
+          <navigation ng-show="principal"></navigation>
+        </section>
+      </nav>
+
+      <div class="content-wrapper">
+        <section class="content-header">
+          <h1>{{ currentPage }}</h1>
+        </section>
+        <section ng-view="" class="content jh-fade-in" ng-if="principal" ng-animate-children />
+      </div>
+
+    </div><!-- ./wrapper -->
+  </body>
+</html>

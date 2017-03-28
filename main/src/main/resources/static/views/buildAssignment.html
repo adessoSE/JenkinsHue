@@ -1,0 +1,131 @@
+<div class="row">
+
+  <div class="col-xs-12" ng-if="lampDTOs.length < 1">
+    keine Lampen vorhanden
+  </div>
+
+
+
+  <div class="col-xs-12">
+    <uib-accordion close-others="true">
+      <uib-accordion-group class="box box-primary jh-fade" ng-repeat="l in lampDTOs">
+        <uib-accordion-heading>
+          <span class="box-title">{{ l.name }}</span>
+        </uib-accordion-heading>
+
+
+
+        <div class="form-group">
+          <label><u>Arbeitszeit</u></label>
+          <div class="input-group">
+            {{ l.workingTimeStart }}
+            <uib-timepicker ng-model="l.workingStart" hour-step="1" minute-step="15" show-meridian="false" mousewheel="false"></uib-timepicker>
+            <uib-timepicker ng-model="l.workingEnd" hour-step="1" minute-step="15" show-meridian="false" mousewheel="false"></uib-timepicker>
+          </div>
+        </div><!-- /.form group -->
+
+        <div class="form-group jh-gap-normal">
+          <label><u>Jobs</u></label>
+          <ul>
+            <li ng-repeat="job in l.jobs">
+              {{ job.name }}
+              <remove-button ng-click="removeJob($parent.$index, job.name)"></remove-button>
+            </li>
+          </ul>
+
+          <div class="input-group">
+            <button class="btn btn-default" ng-click="addJob($index)" ng-disabled="loadingJobs">Job hinzufügen</button>
+          </div>
+        </div><!-- /.form group -->
+
+
+
+
+
+
+
+        <div class="form-group jh-gap-normal">
+          <label><u>Szenarien</u></label>
+
+          <div class="box collapsed-box box-solid" ng-if="l.buildingConfigs.length">
+            <div class="box-header">
+              <h3 class="box-title">BUILDING ({{ l.buildingConfigs.length }})</h3>
+              <div class="pull-right box-tools">
+            	   <button type="button" class="btn btn-primary btn-sm" data-widget="collapse"><i class="fa fa-plus"></i></button>
+              </div><!-- /. box-tools -->
+            </div><!-- /.box-header -->
+            <div class="box-body no-padding" style="display: none;">
+              <div class="row">
+                <div class="col-md-3 col-sm-6" ng-repeat="s in l.buildingConfigs">
+                  <scenario-config></scenario-config>
+                </div>
+              </div><!-- /.row -->
+            </div><!-- /.box-body -->
+          </div>
+
+          <div class="box collapsed-box box-solid" ng-if="l.failureConfigs.length">
+            <div class="box-header">
+              <h3 class="box-title">FAILURE ({{ l.failureConfigs.length }})</h3>
+              <div class="pull-right box-tools">
+            	   <button type="button" class="btn btn-danger btn-sm" data-widget="collapse"><i class="fa fa-plus"></i></button>
+              </div><!-- /. box-tools -->
+            </div><!-- /.box-header -->
+            <div class="box-body no-padding" style="display: none;">
+              <div class="row">
+                <div class="col-md-3 col-sm-6" ng-repeat="s in l.failureConfigs">
+                  <scenario-config></scenario-config>
+                </div>
+              </div><!-- /.row -->
+            </div><!-- /.box-body -->
+          </div>
+
+          <div class="box collapsed-box box-solid" ng-if="l.unstableConfigs.length">
+            <div class="box-header">
+              <h3 class="box-title">UNSTABLE ({{ l.unstableConfigs.length }})</h3>
+              <div class="pull-right box-tools">
+            	   <button type="button" class="btn btn-warning btn-sm" data-widget="collapse"><i class="fa fa-plus"></i></button>
+              </div><!-- /. box-tools -->
+            </div><!-- /.box-header -->
+            <div class="box-body no-padding" style="display: none;">
+              <div class="row">
+                <div class="col-md-3 col-sm-6" ng-repeat="s in l.unstableConfigs">
+                  <scenario-config></scenario-config>
+                </div>
+              </div><!-- /.row -->
+            </div><!-- /.box-body -->
+          </div>
+
+          <div class="box collapsed-box box-solid" ng-if="l.successConfigs.length">
+            <div class="box-header">
+              <h3 class="box-title">SUCCESS ({{ l.successConfigs.length }})</h3>
+              <div class="pull-right box-tools">
+            	   <button type="button" class="btn btn-success btn-sm" data-widget="collapse"><i class="fa fa-plus"></i></button>
+              </div><!-- /. box-tools -->
+            </div><!-- /.box-header -->
+            <div class="box-body no-padding" style="display: none;">
+              <div class="row">
+                <div class="col-md-3 col-sm-6" ng-repeat="s in l.successConfigs">
+                  <scenario-config></scenario-config>
+                </div>
+              </div><!-- /.row -->
+            </div><!-- /.box-body -->
+          </div>
+
+          <div class="input-group">
+            <button class="btn btn-default" ng-click="addScenario($index)" ng-disabled="loadingScenarios">Szenario hinzufügen</button>
+          </div><!-- /.input group -->
+
+        </div><!-- /.form group -->
+
+        <div class="form-group jh-gap-normal">
+          <button class="btn btn-success" ng-click="saveLamp($index)">Speichern</button>
+          <button class="btn btn-default" ng-click="resetLamp($index)">Zurücksetzen</button>
+        </div><!-- /.form group -->
+
+
+
+      </uib-accordion-group>
+    </uib-accordion>
+  </div>
+
+</div><!-- /.row -->

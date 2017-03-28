@@ -1,0 +1,115 @@
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box box-primary">
+      <div class="box-header">
+        <h3 class="box-title">Hue Bridge hinzufügen</h3>
+      </div><!-- /.box-header -->
+
+      <!-- form start -->
+      <form role="form" name="ipForm" novalidate>
+        <div class="box-body">
+
+          <!-- IP mask -->
+          <div class="form-group" ng-class="{'has-error': ipForm.ip.$invalid && ipForm.ip.$touched, 'has-success': ipForm.ip.$valid}">
+            <label><i class="fa" ng-class="{'fa-times-circle-o': ipForm.ip.$invalid && ipForm.ip.$touched, 'fa-check': ipForm.ip.$valid}"></i> IP-Adresse</label>
+            <div class="input-group">
+              <div class="input-group-addon">
+                <i class="fa fa-laptop"></i>
+              </div>
+              <input type="text" class="form-control" name="ip" placeholder="IP-Adresse" ng-model="ip" data-inputmask="'alias': 'ip'" data-mask required>
+            </div><!-- /.input group -->
+          </div><!-- /.form group -->
+        </div><!-- /.box-body -->
+
+        <div class="box-footer">
+          <button type="submit" class="btn btn-success" ng-disabled="ipForm.$invalid" ng-click="createBridge()">Anlegen</button>
+          <button type="submit" class="btn btn-default" ng-click="searchForBridges()" ng-disabled="loadingBridges">Nach Bridges suchen</button>
+        </div>
+      </form>
+    </div><!-- /.box -->
+  </div>
+</div><!-- /.row -->
+
+
+
+
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="box">
+      <div class="box-header">
+        <h3 class="box-title">Übersicht</h3>
+      </div><!-- /.box-header -->
+      <div class="box-body">
+
+
+
+
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon">
+              <span ng-if="!bridgeData.searching" class="glyphicon glyphicon-search"></span>
+              <img ng-if="bridgeData.searching" src="images/loading.gif" width="14px" height="14px"></img>
+            </div>
+            <input type="text" class="form-control" placeholder="Suchen" ng-model="bridgeData.searchItem" ng-change="bridgeData.computeSearch()">
+          </div>
+        </div>
+
+        <div class="form-group pull-left">
+          <label class="text-success">Anzahl: {{ bridgeData.count }}</label>
+        </div>
+
+        <div class="form-group pull-right">
+          <label class="text-success">{{ bridgeData.page+1 }}/{{ bridgeData.lastPage+1 }}</label>
+          <div class="btn-group" role="group">
+            <button ng-disabled="!bridgeData.backPossible()" type="button" class="btn" ng-click="bridgeData.back()">Zurück</button>
+            <button ng-disabled="!bridgeData.forwardPossible()" type="button" class="btn" ng-click="bridgeData.forward()">Weiter</button>
+          </div>
+        </div>
+
+        <div class="clearfix"></div>
+
+        <div class="input-group pull-right">
+          <select ng-model="bridgeData.pageSize" ng-change="bridgeData.pageSizeHasChanged()" convert-to-number>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="15">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="250">250</option>
+            <option value="500">500</option>
+          </select>
+        </div>
+
+        <p ng-show="bridgeData.count < 1">keine Bridges vorhanden</p>
+
+        <table class="table table-bordered table-striped" ng-hide="bridgeData.count < 1">
+          <thead>
+            <tr>
+              <th>IP</th>
+              <th>Hue-User</th>
+              <th>Besitzer</th>
+              <th>Status</th>
+              <th>Aktionen</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="b in bridgeData.dtos">
+              <td>{{ b.ip }}</td>
+              <td>{{ b.hueUserName }}</td>
+              <td>{{ b.user ? b.user.email : '-' }}</td>
+              <td ng-if="b.state">{{ b.state }}</td>
+              <td ng-if="!b.state">Antwortet nicht</td>
+              <td>
+                <button class="btn btn-sm btn-default" ng-click="removeBridge(b.id)" ng-if="(b.user.id == userId) || isAdmin()">Entfernen</button>
+                <span ng-if="b.user.id != userId && !isAdmin()">keine Berechtigung</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div><!-- /.box-body -->
+    </div><!-- /.box -->
+
+
+  </div><!-- /.col -->
+</div><!-- /.row -->

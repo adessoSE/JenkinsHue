@@ -1,0 +1,123 @@
+/*
+ * animation for ng-view
+ */
+.jh-fade-in {
+  opacity: 1;
+}
+.jh-fade-in.ng-enter {
+  -webkit-transition: all 500ms ease;
+  transition: all 500ms ease;
+}
+.jh-fade-in.ng-enter {
+  opacity: 0;
+}
+.jh-fade-in.ng-enter-active {
+  opacity: 1;
+}
+
+/*
+ * animation for buildAssignment
+ */
+.jh-fade {
+    opacity: 1;
+}
+.jh-fade.ng-enter,
+.jh-fade.ng-leave {
+    -webkit-transition: all 500ms ease;
+    transition: all 500ms ease;
+}
+.jh-fade.ng-enter {
+    opacity: 0;
+}
+.jh-fade.ng-enter-active {
+    opacity: 1;
+}
+.jh-fade.ng-leave {
+    opacity: 1;
+}
+.jh-fade.ng-leave-active {
+    opacity: 0;
+}
+
+
+.select2-selection__choice {
+  color: black !important;
+}
+
+.uib-timepicker {
+  margin-right: 20px;
+}
+
+.jh-box {
+  padding: 10px;
+}
+
+.jh-box-border {
+  margin: 4px;
+  padding: 10px;
+  border: 1px solid #e3e3e3;
+  border-radius: 4px;
+}
+
+.jh-scenario-config {
+  height: 260px;
+}
+
+.jh-hidden {
+  visibility: hidden;
+}
+
+.jh-username {
+  display: block;
+  color: #fff;
+  padding: 15px 10px 15px 10px;
+}
+
+.jh-gap-normal {
+  margin-top: 48px;
+}
+
+.small-box h4 {
+  font-weight: bold;
+  margin: 0 0 10px 0;
+  white-space: nowrap;
+  padding: 0;
+}
+
+.panel-default>.panel-heading {
+  background-color: #fff;
+}
+
+.dashboard-item-footer {
+  position: relative;
+  text-align: center;
+  padding: 3px 0;
+  color: rgba(255,255,255,0.8);
+  display: block;
+  z-index: 10;
+  background: rgba(0,0,0,0.1);
+  text-decoration: none;
+}
+
+/* growl */
+.growl-container.growl-fixed.top-right {
+  top: 60px;
+}
+
+@media (max-width: 1280px) {
+  .small-box h3 {
+    font-size: 28px;
+  }
+  .small-box h4 {
+    font-size: 25px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .small-box h3 {
+    font-size: 18px;
+  }
+  .small-box h4 {
+    font-size: 14px;
+  }
+}
