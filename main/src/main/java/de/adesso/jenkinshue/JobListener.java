@@ -2,6 +2,7 @@ package de.adesso.jenkinshue;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,24 +50,34 @@ public class JobListener {
 	public void updateLamps() {
 		JenkinsDTO jenkinsDTO = jenkinsService.getJenkins();
 		List<JenkinsJobDTO> jenkinsJobs = jenkinsDTO.getJobs();
-		
+
 		log.debug("Anzahl Jenkins-Jobs: " + jenkinsJobs.size());
 		
 		List<LampDTO> lamps = lampService.findAll();
 		log.debug("Anzahl Lampen: " + lamps.size());
 		
 		List<LampHueDTO> connectedLamps = hueService.findAllLamps();
-		
+		log.debug("Gefundene Lampen: " + connectedLamps.size());
+
 		for(LampDTO lamp : lamps) {
+			updateLamp(lamp, jenkinsJobs, connectedLamps);
+		}
+	}
+
+	void updateLamp(LampDTO lamp, List<JenkinsJobDTO> jenkinsJobs, List<LampHueDTO> connectedLamps) {
+		if(isTurnOffTime(lamp, DateTime.now())) {
+			LampNameDTO turnOffThisLamp = new LampNameDTO(lamp.getId(), lamp.getHueUniqueId(), lamp.getName());
+			hueService.turnOff(new LampTurnOffDTO(Arrays.asList(turnOffThisLamp)));
+		} else {
 			TeamDTO team = lamp.getTeam();
 			List<Scenario> scenarioPriority = team.getScenarioPriority();
-			
+
 			int highestPriority = Integer.MAX_VALUE;
 			Scenario highestPrioritizedScenario = null;
-			
+
 			List<JobDTO> jobs = lamp.getJobs();
 			log.debug("Der Lampe " + lamp.getHueUniqueId() + " zugewiesene Jobs: " + jobs.size());
-			
+
 			// bestimme das wichtigste Szenario
 			for(JobDTO job : jobs) {
 				try {
@@ -85,16 +96,16 @@ public class JobListener {
 					}
 				}
 			}
-			
-			if(highestPrioritizedScenario != null) { // es existiert min. ein Build
+
+			if(highestPrioritizedScenario != null) { // at least one build with build state BUILDING, FAILURE, UNSTABLE or SUCCESS
 				ScenarioConfigDTO config = null;
-				
+
 				for(ScenarioConfigDTO tmp : lamp.getScenarioConfigs()) {
 					if(highestPrioritizedScenario.equals(tmp.getScenario())) {
 						config = tmp;
 					}
 				}
-				
+
 				Scenario fallback = null;
 				if(config == null) { // keine passende ScenarioConfig -> Plan B
 					if(highestPrioritizedScenario.toString().startsWith("BUILDING")) {
@@ -112,31 +123,25 @@ public class JobListener {
 						}
 					}
 				}
-				
-				DateTime now = DateTime.now();
-				if(isTurnOffTime(lamp, now)) {
-					LampNameDTO turnOffThisLamp = new LampNameDTO(lamp.getId(), lamp.getHueUniqueId(), lamp.getName());
-					hueService.turnOff(new LampTurnOffDTO(Arrays.asList(turnOffThisLamp)));
+
+				if (!highestPrioritizedScenario.equals(lamp.getLastShownScenario())) {
+					log.debug("(priorisiertes) eingetretenes Szenario: " + highestPrioritizedScenario);
+					log.debug("anzuzeigende Konfiguration: " + config);
+					log.debug("Fallback: " + (fallback != null));
+
+					hueService.updateLamp(lamp, config); // wenn (config == null) wird nichts passieren
+				} else if(lampIsOff(lamp, connectedLamps)) { // Lampe wird eingeschaltet
+					log.debug("Lampe wird eingeschaltet :-)");
+					log.debug("(priorisiertes) eingetretenes Szenario: " + highestPrioritizedScenario);
+					log.debug("Fallback: " + (fallback != null));
+
+					hueService.updateLamp(lamp, config);
 				} else {
-					if (!highestPrioritizedScenario.equals(lamp.getLastShownScenario())) {
-						log.debug("(priorisiertes) eingetretenes Szenario: " + highestPrioritizedScenario);
-						log.debug("anzuzeigende Konfiguration: " + config);
-						log.debug("Fallback: " + (fallback != null));
-						
-						hueService.updateLamp(lamp, config); // wenn (config == null) wird nichts passieren
-					} else if(lampIsOff(lamp, connectedLamps)) { // Lampe wird eingeschaltet
-						log.debug("Lampe wird eingeschaltet :-)");
-						log.debug("(priorisiertes) eingetretenes Szenario: " + highestPrioritizedScenario);
-						log.debug("Fallback: " + (fallback != null));
-						
-						hueService.updateLamp(lamp, config);
-					} else {
-						log.debug("Die Szenarios der überwachten Jobs haben sich nicht geändert!");
-					}
+					log.debug("Die Szenarios der überwachten Jobs haben sich nicht geändert!");
 				}
-				
+
 				// "shown" ist es auch, wenn die Lampe aus ist!
-				lamp = lampService.updateLastShownScenario(new LampUpdateLastShownScenarioDTO(lamp.getId(), highestPrioritizedScenario));
+				lampService.updateLastShownScenario(new LampUpdateLastShownScenarioDTO(lamp.getId(), highestPrioritizedScenario));
 			}
 		}
 	}
@@ -194,14 +199,25 @@ public class JobListener {
 	}
 	
 	private Scenario determineLastScenario(JenkinsJobDTO jenkinsJob) {
-		if(jenkinsJob.getBuilds() == null || jenkinsJob.getBuilds().isEmpty()) {
+		List<JenkinsBuildDTO> builds = jenkinsJob.getBuilds();
+		if(builds != null) {
+			builds = builds.stream().filter(build -> {
+				try {
+					return !BuildState.ABORTED.equals(extractBuildState(build));
+				} catch (IllegalArgumentException e) {
+					return false; // unsupported build state
+				}
+			}).collect(Collectors.toList());
+		}
+
+		if(builds == null || builds.isEmpty()) {
 			return null;
-		} else if(jenkinsJob.getBuilds().size() == 1) {
-			BuildState currentState = extractBuildState(jenkinsJob.getBuilds().get(0));
+		} else if(builds.size() == 1) {
+			BuildState currentState = extractBuildState(builds.get(0));
 			return Scenario.valueOf(currentState.toString() + "_AFTER_SUCCESS");
 		} else { // mehr als 1 Build -> ausreichend fuer Szenario
-			BuildState previousState = extractBuildState(jenkinsJob.getBuilds().get(1));
-			BuildState currentState = extractBuildState(jenkinsJob.getBuilds().get(0));
+			BuildState previousState = extractBuildState(builds.get(1));
+			BuildState currentState = extractBuildState(builds.get(0));
 			return buildStatesToScenario(previousState, currentState);
 		}
 	}

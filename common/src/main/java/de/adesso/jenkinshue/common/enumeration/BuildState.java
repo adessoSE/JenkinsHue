@@ -7,6 +7,6 @@ package de.adesso.jenkinshue.common.enumeration;
  */
 public enum BuildState {
 
-	SUCCESS, BUILDING, UNSTABLE, FAILURE;
+	SUCCESS, BUILDING, UNSTABLE, FAILURE, ABORTED
 
 }
