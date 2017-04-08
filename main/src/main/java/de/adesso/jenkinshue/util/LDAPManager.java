@@ -1,8 +1,10 @@
 package de.adesso.jenkinshue.util;
 
-import java.io.Serializable;
-import java.text.MessageFormat;
-import java.util.Hashtable;
+import de.adesso.jenkinshue.config.LdapValue;
+import de.adesso.jenkinshue.entity.User;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
@@ -10,49 +12,29 @@ import javax.naming.NamingException;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-import de.adesso.jenkinshue.entity.User;
-import lombok.extern.log4j.Log4j2;
+import java.io.Serializable;
+import java.text.MessageFormat;
+import java.util.Hashtable;
 
 /**
- * 
  * @author wennier
- *
  */
 @Log4j2
 @Component
 public class LDAPManager implements Serializable {
-	
+
 	private static final long serialVersionUID = -9087546539808571648L;
 
-	@Value("${ldap.server.domain}")
-	private String ldapDomain;
-	
-	@Value("${ldap.server.userSearchBase}")
-	private String userSearchBase;
+	@Autowired
+	private LdapValue ldapValue;
 
-	@Value("${ldap.server.userSearchFilter}")
-	private String userSearchFilter;
-
-	@Value("${ldap.server.userName}")
-	private String userName;
-	
-	@Value("${ldap.server.password}")
-	private String password;
-
-	@Value("${ldap.server.url}")
-	private String ldapUrl;
-	
 	private InitialDirContext createContext() throws NamingException {
 		Hashtable<String, String> env = new Hashtable<>();
 		env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
-		env.put(Context.PROVIDER_URL, ldapUrl);
+		env.put(Context.PROVIDER_URL, ldapValue.getLdapUrl());
 		env.put(Context.SECURITY_AUTHENTICATION, "simple");
-		env.put(Context.SECURITY_PRINCIPAL, userName + "@" + ldapDomain);
-		env.put(Context.SECURITY_CREDENTIALS, password);
+		env.put(Context.SECURITY_PRINCIPAL, ldapValue.getUserName() + "@" + ldapValue.getLdapDomain());
+		env.put(Context.SECURITY_CREDENTIALS, ldapValue.getPassword());
 		return new InitialDirContext(env);
 	}
 
@@ -60,20 +42,20 @@ public class LDAPManager implements Serializable {
 		SearchControls cons = new SearchControls();
 		cons.setSearchScope(SearchControls.SUBTREE_SCOPE);
 		cons.setDerefLinkFlag(false);
-		return context.search(userSearchBase, MessageFormat.format(userSearchFilter, login), cons);
+		return context.search(ldapValue.getUserSearchBase(), MessageFormat.format(ldapValue.getUserSearchFilter(), login), cons);
 	}
-	
+
 	public User getUserForLoginName(String login) {
 		try {
 			InitialDirContext ctx = createContext();
-			
+
 			User user = new User();
 			SearchResult next = getLDAPInformation(ctx, login).nextElement();
 			user.setLogin(login);
 			user.setSurname(next.getAttributes().get("sn").get().toString());
 			user.setForename(next.getAttributes().get("givenName").get().toString());
 			user.setEmail(next.getAttributes().get("mail").get().toString());
-			
+
 			ctx.close();
 			return user;
 		} catch (Exception e) {

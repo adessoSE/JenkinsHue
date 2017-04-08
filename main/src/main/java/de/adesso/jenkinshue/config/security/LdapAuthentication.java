@@ -1,9 +1,9 @@
 package de.adesso.jenkinshue.config.security;
 
 import de.adesso.jenkinshue.common.enumeration.Role;
+import de.adesso.jenkinshue.config.LdapValue;
 import de.adesso.jenkinshue.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.ldap.core.DirContextAdapter;
@@ -22,89 +22,72 @@ import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import java.util.*;
 
 /**
- *
  * @author wennier
- *
  */
 @Configuration
 public class LdapAuthentication {
 
-    @Value("${ldap.server.url}")
-    private String ldapUrl;
+	@Autowired
+	private LdapValue ldapValue;
 
-    @Value("${ldap.server.userSearchFilter}")
-    private String userSearchFilter;
+	@Autowired
+	private UserRepository userRepository;
 
-    @Value("${ldap.server.userSearchBase}")
-    private String userSearchBase;
+	public void enable(AuthenticationManagerBuilder auth) throws Exception {
+		auth.ldapAuthentication()
+				.userSearchFilter(ldapValue.getUserSearchFilter())
+				.userSearchBase(ldapValue.getUserSearchBase())
+				.userDetailsContextMapper(new LdapAuthentication.LdapGroupAuthorityMapper())
+				.contextSource(contextSource())
+				.ldapAuthoritiesPopulator(ldapAuthoritiesPopulator());
+	}
 
-    @Value("${ldap.server.groupSearchBase}")
-    private String groupSearchBase;
+	@Bean
+	public LdapAuthoritiesPopulator ldapAuthoritiesPopulator() {
+		DefaultLdapAuthoritiesPopulator populator = new DefaultLdapAuthoritiesPopulator(contextSource(), ldapValue.getGroupSearchBase());
+		populator.setSearchSubtree(true);
+		populator.setIgnorePartialResultException(true);
+		return populator;
+	}
 
-    @Value("${ldap.server.userDn}")
-    private String userDn;
+	class LdapGroupAuthorityMapper implements UserDetailsContextMapper {
 
-    @Value("${ldap.server.password}")
-    private String password;
+		private List<String> checkAuthorities = new ArrayList<String>();
 
-    @Autowired
-    private UserRepository userRepository;
+		public LdapGroupAuthorityMapper(String... checkAuthorities) {
+			for (String checkAuthority : checkAuthorities) {
+				this.checkAuthorities.add(checkAuthority.toLowerCase());
+			}
+		}
 
-    public void enable(AuthenticationManagerBuilder auth) throws Exception {
-        auth.ldapAuthentication()
-                .userSearchFilter(userSearchFilter)
-                .userSearchBase(userSearchBase)
-                .userDetailsContextMapper(new LdapAuthentication.LdapGroupAuthorityMapper())
-                .contextSource(contextSource())
-                .ldapAuthoritiesPopulator(ldapAuthoritiesPopulator());
-    }
+		@Override
+		public UserDetails mapUserFromContext(DirContextOperations ctx, String username,
+											  Collection<? extends GrantedAuthority> authorities) {
+			Set<SimpleGrantedAuthority> userAuthorities = new HashSet<>();
 
-    @Bean
-    public LdapAuthoritiesPopulator ldapAuthoritiesPopulator() {
-        DefaultLdapAuthoritiesPopulator populator = new DefaultLdapAuthoritiesPopulator(contextSource(), groupSearchBase);
-        populator.setSearchSubtree(true);
-        populator.setIgnorePartialResultException(true);
-        return populator;
-    }
+			List<Role> roles = userRepository.findByLogin(username.toLowerCase()).getRoles();
+			if (roles != null) {
+				for (Role role : roles) {
+					userAuthorities.add(new SimpleGrantedAuthority(role.toString()));
+				}
+			}
 
-    class LdapGroupAuthorityMapper implements UserDetailsContextMapper {
+			return new User(username, "", true, true, true, true, userAuthorities);
+		}
 
-        private List<String> checkAuthorities = new ArrayList<String>();
+		@Override
+		public void mapUserToContext(UserDetails user, DirContextAdapter ctx) {
+		}
 
-        public LdapGroupAuthorityMapper(String... checkAuthorities) {
-            for (String checkAuthority : checkAuthorities) {
-                this.checkAuthorities.add(checkAuthority.toLowerCase());
-            }
-        }
+	}
 
-        @Override
-        public UserDetails mapUserFromContext(DirContextOperations ctx, String username,
-                                              Collection<? extends GrantedAuthority> authorities) {
-            Set<SimpleGrantedAuthority> userAuthorities = new HashSet<>();
-
-            List<Role> roles = userRepository.findByLogin(username.toLowerCase()).getRoles();
-            if(roles != null) {
-                for(Role role : roles) {
-                    userAuthorities.add(new SimpleGrantedAuthority(role.toString()));
-                }
-            }
-
-            return new User(username, "", true, true, true, true, userAuthorities);
-        }
-
-        @Override
-        public void mapUserToContext(UserDetails user, DirContextAdapter ctx) {
-        }
-
-    }
-
-    @Bean
-    public BaseLdapPathContextSource contextSource() {
-        DefaultSpringSecurityContextSource contextSource = new DefaultSpringSecurityContextSource(ldapUrl);
-        contextSource.setUserDn(userDn);
-        contextSource.setPassword(password);
-        contextSource.afterPropertiesSet();
-        return contextSource;
-    }
+	@Bean
+	public BaseLdapPathContextSource contextSource() {
+		DefaultSpringSecurityContextSource contextSource = new DefaultSpringSecurityContextSource(ldapValue.getLdapUrl());
+		contextSource.setUserDn(ldapValue.getUserDn());
+		contextSource.setPassword(ldapValue.getPassword());
+		contextSource.afterPropertiesSet();
+		return contextSource;
+	}
 
 }
