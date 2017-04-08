@@ -30,13 +30,13 @@ import lombok.extern.log4j.Log4j2;
 @Service
 public class JenkinsServiceImpl implements JenkinsService {
 
-	@Value("${jenkins_url}")
+	@Value("${jenkins.url}")
 	private String jenkinsUrl;
 	
-	@Value("${ldap.server.userName}")
+	@Value("${jenkins.userName}")
 	private String userName;
 	
-	@Value("${ldap.server.password}")
+	@Value("${jenkins.password}")
 	private String password;
 	
 	private static final String API_JSON_TREE = "api/json?tree=";
