@@ -1,25 +1,8 @@
 package de.adesso.jenkinshue.config.security;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.ldap.core.DirContextAdapter;
-import org.springframework.ldap.core.DirContextOperations;
-import org.springframework.ldap.core.support.BaseLdapPathContextSource;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,14 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.ldap.DefaultSpringSecurityContextSource;
-import org.springframework.security.ldap.userdetails.DefaultLdapAuthoritiesPopulator;
-import org.springframework.security.ldap.userdetails.LdapAuthoritiesPopulator;
-import org.springframework.security.ldap.userdetails.UserDetailsContextMapper;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -46,8 +21,12 @@ import org.springframework.security.web.csrf.HttpSessionCsrfTokenRepository;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.WebUtils;
 
-import de.adesso.jenkinshue.common.enumeration.Role;
-import de.adesso.jenkinshue.repository.UserRepository;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * 
@@ -59,29 +38,11 @@ import de.adesso.jenkinshue.repository.UserRepository;
 @EnableGlobalMethodSecurity(proxyTargetClass = true, prePostEnabled = true/*, securedEnabled = true*/)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-	@Value("${ldap.server.url}")
-	private String ldapUrl;
-	
-	@Value("${ldap.server.userSearchFilter}")
-	private String userSearchFilter;
-	
-	@Value("${ldap.server.userSearchBase}")
-	private String userSearchBase;
-
-	@Value("${ldap.server.groupSearchBase}")
-	private String groupSearchBase;
-
-	@Value("${ldap.server.userDn}")
-	private String userDn;
-	
-	@Value("${ldap.server.password}")
-	private String password;
-	
 	@Autowired
 	private UserAuthenticationProvider userAuthenticationProvider;
 	
 	@Autowired
-	private UserRepository userRepository;
+	private LdapAuthentication ldapAuthentication;
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -130,72 +91,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		};
 	}
 
-	@Bean
-	public LdapAuthoritiesPopulator ldapAuthoritiesPopulator() {
-		DefaultLdapAuthoritiesPopulator populator = new DefaultLdapAuthoritiesPopulator(contextSource(), groupSearchBase);
-		populator.setSearchSubtree(true);
-		populator.setIgnorePartialResultException(true);
-		return populator;
-	}
-	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.authenticationProvider(userAuthenticationProvider);
-		auth.ldapAuthentication()
-			.userSearchFilter(userSearchFilter)
-			.userSearchBase(userSearchBase)
-			.userDetailsContextMapper(new LdapGroupAuthorityMapper())
-			.contextSource(contextSource())
-			.ldapAuthoritiesPopulator(ldapAuthoritiesPopulator());
-	}
-	
-	class LdapGroupAuthorityMapper implements UserDetailsContextMapper {
-		
-		private List<String> checkAuthorities = new ArrayList<String>();
-
-		public LdapGroupAuthorityMapper(String... checkAuthorities) {
-			for (String checkAuthority : checkAuthorities) {
-				this.checkAuthorities.add(checkAuthority.toLowerCase());
-			}
-		}
-
-		@Override
-		public UserDetails mapUserFromContext(DirContextOperations ctx, String username,
-				Collection<? extends GrantedAuthority> authorities) {
-			Set<SimpleGrantedAuthority> userAuthorities = new HashSet<>();
-			
-//			for (GrantedAuthority a : authorities) {
-//				String userGroup = a.getAuthority().toLowerCase().substring("ROLE_".length());
-//				if (checkAuthorities.contains(userGroup)) {
-//					userAuthorities.add(new SimpleGrantedAuthority(a.getAuthority().replace("-", "_")));
-//				}
-//			}
-			
-			List<Role> roles = userRepository.findByLogin(username.toLowerCase()).getRoles();
-			if(roles != null) {
-				for(Role role : roles) {
-					userAuthorities.add(new SimpleGrantedAuthority(role.toString()));
-				}
-			}
-			
-			return new User(username, "", true, true, true, true, userAuthorities);
-		}
-
-		@Override
-		public void mapUserToContext(UserDetails user, DirContextAdapter ctx) {
-		}
-
+		ldapAuthentication.enable(auth);
 	}
 
-	@Bean
-	public BaseLdapPathContextSource contextSource() {
-		DefaultSpringSecurityContextSource contextSource = new DefaultSpringSecurityContextSource(ldapUrl);
-		contextSource.setUserDn(userDn);
-		contextSource.setPassword(password);
-		contextSource.afterPropertiesSet();
-		return contextSource;
-	}
-	
 	@Bean
 	public AuthenticationSuccessHandler authenticationSuccessHandler() {
 		return new AuthenticationSuccessHandler() {
