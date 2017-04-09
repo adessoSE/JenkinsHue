@@ -4,6 +4,7 @@ import de.adesso.jenkinshue.config.LdapValue;
 import de.adesso.jenkinshue.entity.User;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
 
 import javax.naming.Context;
@@ -21,6 +22,7 @@ import java.util.Hashtable;
  */
 @Log4j2
 @Component
+@ConditionalOnBean(LdapValue.class)
 public class LDAPManager implements Serializable {
 
 	private static final long serialVersionUID = -9087546539808571648L;
@@ -50,11 +52,11 @@ public class LDAPManager implements Serializable {
 			InitialDirContext ctx = createContext();
 
 			User user = new User();
-			SearchResult next = getLDAPInformation(ctx, login).nextElement();
-			user.setLogin(login);
+			SearchResult next = getLDAPInformation(ctx, login.toLowerCase()).nextElement();
+			user.setLogin(login.toLowerCase());
 			user.setSurname(next.getAttributes().get("sn").get().toString());
 			user.setForename(next.getAttributes().get("givenName").get().toString());
-			user.setEmail(next.getAttributes().get("mail").get().toString());
+			user.setEmail(next.getAttributes().get("mail").get().toString().toLowerCase());
 
 			ctx.close();
 			return user;

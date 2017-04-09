@@ -41,7 +41,6 @@ public class User implements Serializable {
 	@GeneratedValue
 	private long id;
 	
-	@NotBlank
 	private String email;
 	
 	@NotBlank

@@ -4,6 +4,7 @@ import de.adesso.jenkinshue.common.enumeration.Role;
 import de.adesso.jenkinshue.config.LdapValue;
 import de.adesso.jenkinshue.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.ldap.core.DirContextAdapter;
@@ -25,6 +26,7 @@ import java.util.*;
  * @author wennier
  */
 @Configuration
+@ConditionalOnBean(LdapValue.class)
 public class LdapAuthentication {
 
 	@Autowired

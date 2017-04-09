@@ -108,7 +108,7 @@
                 <table class="table table-condensed" style="table-layout: fixed; background-color: transparent;" ng-if="t.users.length">
                   <thead>
                     <tr>
-                      <th>Name</th>
+                      <th>Login</th>
                       <th>Rollen</th>
                       <th>
                         <button type="button" class="btn btn-sm btn-success" ng-click="createUser(t.id)"><i class="fa fa-plus"></i></button>
@@ -117,7 +117,7 @@
                   </thead>
                   <tbody>
                     <tr ng-repeat="u in t.users">
-                      <td>{{ u.forename }} {{ u.surname }}</td>
+                      <td>{{ u.login }}</td>
                       <td ng-if="u.roles.length < 1">keine</td>
                       <td ng-if="u.roles.length">
                         <p ng-repeat="r in u.roles">{{ r.text }}</p>

@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private BridgeRepository bridgeRepository;
 	
-	@Autowired
+	@Autowired(required = false)
 	private LDAPManager ldapManager;
 
 	@Autowired
@@ -95,22 +95,27 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDTO create(UserCreateDTO user) throws UserAlreadyExistsException, InvalidLoginException {
-		User ldapUser = ldapManager.getUserForLoginName(user.getLogin().toLowerCase());
-		
-		if(ldapUser != null) {
-			if(userRepository.findByEmail(ldapUser.getEmail().toLowerCase()) != null) {
-				throw new UserAlreadyExistsException(ldapUser.getEmail().toLowerCase());
-			}
-			
-			ldapUser.setEmail(ldapUser.getEmail().toLowerCase());
-			ldapUser.setTeam(teamRepository.findOne(user.getTeamId()));
-			
-			ldapUser = userRepository.save(ldapUser);
-			
-			return mapper.map(ldapUser, UserDTO.class);
-		} else {
-			throw new InvalidLoginException(user.getLogin());
+		String login = user.getLogin().toLowerCase();
+		if(userRepository.findByLogin(login) != null) {
+			throw new UserAlreadyExistsException(login);
 		}
+
+		User u = null;
+		//noinspection ConstantConditions
+		if(ldapManager != null) {
+			u = ldapManager.getUserForLoginName(login);
+			if (u == null) {
+				throw new InvalidLoginException(login);
+			}
+		} else {
+			u = new User();
+			u.setLogin(login);
+		}
+
+		u.setTeam(teamRepository.findOne(user.getTeamId()));
+		u = userRepository.save(u);
+
+		return mapper.map(u, UserDTO.class);
 	}
 	
 	@Override

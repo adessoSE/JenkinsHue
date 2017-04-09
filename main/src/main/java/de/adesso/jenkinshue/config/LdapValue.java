@@ -2,37 +2,50 @@ package de.adesso.jenkinshue.config;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+
+import static de.adesso.jenkinshue.config.LdapValue.*;
 
 /**
  * @author wennier
  */
 @Getter
 @Component
+@ConditionalOnProperty(name = {LDAP_DOMAIN, LDAP_URL, LDAP_USER_SEARCH_FILTER, LDAP_USER_SEARCH_BASE, LDAP_GROUP_SEARCH_BASE, LDAP_USER_DN, LDAP_USER_NAME, LDAP_PASSWORD})
 public class LdapValue {
 
-	@Value("${ldap.server.domain}")
+	public static final String LDAP_DOMAIN = "ldap.server.domain";
+	public static final String LDAP_URL = "ldap.server.url";
+	public static final String LDAP_USER_SEARCH_FILTER = "ldap.server.userSearchFilter";
+	public static final String LDAP_USER_SEARCH_BASE = "ldap.server.userSearchBase";
+	public static final String LDAP_GROUP_SEARCH_BASE = "ldap.server.groupSearchBase";
+	public static final String LDAP_USER_DN = "ldap.server.userDn";
+	public static final String LDAP_USER_NAME = "ldap.server.userName";
+	public static final String LDAP_PASSWORD = "ldap.server.password";
+
+	@Value("${" + LDAP_DOMAIN + "}")
 	private String ldapDomain;
 
-	@Value("${ldap.server.url}")
+	@Value("${" + LDAP_URL + "}")
 	private String ldapUrl;
 
-	@Value("${ldap.server.userSearchFilter}")
+	@Value("${" + LDAP_USER_SEARCH_FILTER + "}")
 	private String userSearchFilter;
 
-	@Value("${ldap.server.userSearchBase}")
+	@Value("${" + LDAP_USER_SEARCH_BASE + "}")
 	private String userSearchBase;
 
-	@Value("${ldap.server.groupSearchBase}")
+	@Value("${" + LDAP_GROUP_SEARCH_BASE + "}")
 	private String groupSearchBase;
 
-	@Value("${ldap.server.userDn}")
+	@Value("${" + LDAP_USER_DN + "}")
 	private String userDn;
 
-	@Value("${ldap.server.userName}")
+	@Value("${" + LDAP_USER_NAME + "}")
 	private String userName;
 
-	@Value("${ldap.server.password}")
+	@Value("${" + LDAP_PASSWORD + "}")
 	private String password;
 
 }

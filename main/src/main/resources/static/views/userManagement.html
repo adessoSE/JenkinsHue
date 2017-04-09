@@ -83,9 +83,18 @@
           </thead>
           <tbody>
             <tr ng-repeat="u in userData.dtos">
-              <td>{{ u.forename }}</td>
-              <td>{{ u.surname }}</td>
-              <td>{{ u.email }}</td>
+              <td>
+                <span ng-if="!u.forename">-</span>
+                <span ng-if="u.forename">{{ u.forename }}</span>
+              </td>
+              <td>
+                <span ng-if="!u.surname">-</span>
+                <span ng-if="u.surname">{{ u.surname }}</span>
+              </td>
+              <td>
+                <span ng-if="!u.email">-</span>
+                <span ng-if="u.email">{{ u.email }}</span>
+              </td>
               <td>{{ u.login }}</td>
               <td>{{ u.team.name }}</td>
               <td ng-if="u.roles.length < 1">keine</td>

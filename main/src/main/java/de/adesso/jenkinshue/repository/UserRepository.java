@@ -18,9 +18,7 @@ import de.adesso.jenkinshue.entity.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 	
-	public static final String FIND_BY_SEARCH_ITEM = "SELECT u FROM User u LEFT JOIN u.team t WHERE LOWER(u.forename) LIKE %:item% OR LOWER(u.surname) LIKE %:item% OR LOWER(t.name) LIKE %:item%";
-	
-	User findByEmail(String email);
+	String FIND_BY_SEARCH_ITEM = "SELECT u FROM User u LEFT JOIN u.team t WHERE LOWER(u.forename) LIKE %:item% OR LOWER(u.surname) LIKE %:item% OR LOWER(t.name) LIKE %:item%";
 	
 	@Query("SELECT u FROM User u LEFT JOIN FETCH u.bridges b WHERE u.login = :login")
 	User findByLogin(@Param("login") String login);
