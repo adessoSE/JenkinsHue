@@ -1,0 +1,3 @@
+mvn deploy:deploy-file -Dfile=./huelocalsdk.jar -DgroupId=com.philips -DartifactId=huelocalsdk -Dversion=1.0 -Dpackaging=jar -Durl=file:./local-maven-repository/ -DrepositoryId=local-maven-repository -DupdateReleaseInfo=true
+
+mvn deploy:deploy-file -Dfile=./huesdkresources.jar -DgroupId=com.philips -DartifactId=huesdkresources -Dversion=1.0 -Dpackaging=jar -Durl=file:./local-maven-repository/ -DrepositoryId=local-maven-repository -DupdateReleaseInfo=true
