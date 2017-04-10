@@ -22,6 +22,7 @@ This is the implementation of my IHK project (Fiete Wennier, June 2016). It show
 java -jar name_of_the_jar.jar
 ```
 - Visit [http://localhost:8484/](http://localhost:8484/)
+- If no ldap connection is specified you can login with username = password (property 'admins')
 
 ### Bridge discovery
 
