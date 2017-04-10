@@ -1,4 +1,4 @@
-# JenkinsHue
+# JenkinsHue [![Build Status](https://travis-ci.org/fi3te/JenkinsHue.svg?branch=master)](https://travis-ci.org/fi3te/JenkinsHue)
 
 This is the implementation of my IHK project (Fiete Wennier, June 2016). It shows the state of multiple jenkins builds using Philips hue lamps. The application can handle multiple lamps und bridges (Philips products).
 
