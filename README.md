@@ -1,13 +1,35 @@
-# JenkinsHue [![Build Status](https://travis-ci.org/fi3te/JenkinsHue.svg?branch=master)](https://travis-ci.org/fi3te/JenkinsHue)
+# JenkinsHue
 
-This is the implementation of my IHK project (June 2016). It shows the state of multiple jenkins builds using Philips hue lights. The application can handle multiple lights und bridges (Philips products).
+This is the implementation of my IHK project (Fiete Wennier, June 2016). It shows the state of multiple jenkins builds using Philips hue lamps. The application can handle multiple lamps und bridges (Philips products).
 
 ![screenshot1](https://github.com/fi3te/JenkinsHue/blob/master/doc/screenshot1.png)
 
-## Requirements
-- LDAP server
+
+## Getting started
+
+### Requirements
 - Jenkins server
-- Philips Hue bridge and light
+- Philips Hue Bridge
+- Philips Hue lamps (e.g. Philips Hue Go)
+- LDAP server (recommended, not necessary)
+
+### Usage
+- Download the latest release
+- Unzip the release
+- Set the required properties in the application.properties file
+- Run it with...
+```sh
+java -jar name_of_the_jar.jar
+```
+- Visit [http://localhost:8484/](http://localhost:8484/)
+
+### Bridge discovery
+
+The bridge can be discovered automatically via N-UPnP. Therefore it needs an internet connection.
+
+Otherwise you can also type in the IP address ot the bridge manually.
+
+Further information can be found [here](https://developers.meethue.com/documentation/hue-bridge-discovery).
 
 
 ## How Does It Work
