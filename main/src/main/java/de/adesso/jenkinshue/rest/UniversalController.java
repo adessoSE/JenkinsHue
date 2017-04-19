@@ -1,7 +1,7 @@
 package de.adesso.jenkinshue.rest;
 
 import java.security.Principal;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,22 +49,12 @@ public class UniversalController {
 	
 	@RequestMapping("/scenarios")
 	public List<Scenario> scenarios() {
-		List<Scenario> scenarios = new ArrayList<>();
-		Scenario[] all = Scenario.values();
-		for(Scenario s : all) {
-			scenarios.add(s);
-		}
-		return scenarios;
+		return Arrays.asList(Scenario.values());
 	}
 	
 	@RequestMapping("/roles")
 	public List<Role> roles() {
-		List<Role> roles = new ArrayList<>();
-		Role[] all = Role.values();
-		for(Role r : all) {
-			roles.add(r);
-		}
-		return roles;
+		return Arrays.asList(Role.values());
 	}
 	
 	@RequestMapping("/dashboard")
