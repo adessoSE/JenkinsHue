@@ -20,7 +20,7 @@ import lombok.extern.log4j.Log4j2;
 public class UserAuthenticationProvider implements AuthenticationProvider {
 	
 	@Autowired
-	private UserService userService;
+	UserService userService;
 	
 	@Override
 	public boolean supports(Class<?> authentication) {

@@ -54,9 +54,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired(required = false)
 	private LdapAuthentication ldapAuthentication;
 
-	@Autowired
-	private UserService userService;
-
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http// .csrf().disable()
@@ -118,7 +115,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Bean
 	public UserDetailsService userDetailsService() {
 		return userName -> {
-            UserDTO user = userService.findByLogin(userName.toLowerCase());
+            UserDTO user = userAuthenticationProvider.userService.findByLogin(userName.toLowerCase());
             if (user == null) {
                 throw new UsernameNotFoundException(userName);
             }
@@ -137,36 +134,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Bean
 	public AuthenticationSuccessHandler authenticationSuccessHandler() {
-		return new AuthenticationSuccessHandler() {
-
-			@Override
-			public void onAuthenticationSuccess(HttpServletRequest req, HttpServletResponse res, Authentication aut)
-					throws IOException, ServletException {
-				res.setStatus(HttpServletResponse.SC_OK);
-			}
-		};
+		return (req, res, aut) -> res.setStatus(HttpServletResponse.SC_OK);
 	}
 
 	@Bean
 	public AuthenticationFailureHandler authenticationFailureHandler() {
-		return new AuthenticationFailureHandler() {
-			@Override
-			public void onAuthenticationFailure(HttpServletRequest req, HttpServletResponse res,
-					AuthenticationException arg2) throws IOException, ServletException {
-				res.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
-			}
-		};
+		return (req, res, arg2) -> res.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
 	}
 
 	@Bean
 	public LogoutSuccessHandler logoutSuccessHandler() {
-		return new LogoutSuccessHandler() {
-			@Override
-			public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response,
-					Authentication authentication) throws IOException, ServletException {
-				response.setStatus(HttpServletResponse.SC_OK);
-			}
-		};
+		return (request, response, authentication) -> response.setStatus(HttpServletResponse.SC_OK);
 	}
 
 	class RestAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoint {
