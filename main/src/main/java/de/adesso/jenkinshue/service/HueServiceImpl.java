@@ -2,6 +2,7 @@ package de.adesso.jenkinshue.service;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -362,11 +363,7 @@ public class HueServiceImpl implements HueService {
 	
 	@Override
 	public List<FoundBridgeDTO> findAllBridges() {
-		List<FoundBridgeDTO> result = new ArrayList<>();
-		for(FoundBridgeDTO bridge : (FoundBridgeDTO[]) new TestRestTemplate().getForObject("https://www.meethue.com/api/nupnp", FoundBridgeDTO[].class)) {
-			result.add(bridge);
-		}
-		return result;
+		return new ArrayList<>(Arrays.asList(new TestRestTemplate().getForObject("https://www.meethue.com/api/nupnp", FoundBridgeDTO[].class)));
 	}
 	
 	private void updateLightStateColor(PHLightState lightState, String lightModelNumber, String colorHex) {
