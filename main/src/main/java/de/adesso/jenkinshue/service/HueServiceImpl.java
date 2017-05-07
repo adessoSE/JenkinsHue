@@ -17,7 +17,7 @@ import javax.annotation.PreDestroy;
 import org.joda.time.DateTime;
 import org.json.hue.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.TestRestTemplate;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;

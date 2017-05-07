@@ -8,7 +8,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.http.client.ClientProtocolException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.TestRestTemplate;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
