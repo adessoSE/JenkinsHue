@@ -1,15 +1,15 @@
 package de.adesso.jenkinshue.service;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
+import de.adesso.jenkinshue.common.service.HolidayService;
+import de.jollyday.HolidayCalendar;
+import de.jollyday.HolidayManager;
+import de.jollyday.ManagerParameters;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.springframework.stereotype.Service;
 
-import de.adesso.jenkinshue.common.service.HolidayService;
-import de.jollyday.HolidayCalendar;
-import de.jollyday.HolidayManager;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 /**
  * 
@@ -27,7 +27,7 @@ public class HoldayServiceImpl implements HolidayService {
 		 */
 		Calendar cal = GregorianCalendar.getInstance();
 		cal.setTime(day.toDate());
-		HolidayManager m = HolidayManager.getInstance(HolidayCalendar.GERMANY);
+		HolidayManager m = HolidayManager.getInstance(ManagerParameters.create(HolidayCalendar.GERMANY, null));
 		boolean isHoliday = m.isHoliday(cal, "nw");
 		if(!isHoliday && day.getMonthOfYear() == 12) {
 			if(day.getDayOfMonth() == 24 || day.getDayOfMonth() == 31) {
