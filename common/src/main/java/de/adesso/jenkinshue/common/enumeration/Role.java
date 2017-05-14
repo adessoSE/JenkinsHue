@@ -26,7 +26,7 @@ public enum Role implements SimpleEnum {
 	
 	private String text;
 	
-	private Role(String text) {
+	Role(String text) {
 		this.text = text;
 	}
 	
@@ -43,7 +43,7 @@ public enum Role implements SimpleEnum {
 			JsonNode node = oc.readTree(jp);
 			return Role.valueOf(node.get("name").asText());
 		}
-		
+
 	}
 	
 }

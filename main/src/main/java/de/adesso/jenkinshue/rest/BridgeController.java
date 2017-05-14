@@ -20,6 +20,11 @@ import de.adesso.jenkinshue.common.service.BridgeService;
 import de.adesso.jenkinshue.exception.BridgeAlreadyExistsException;
 import de.adesso.jenkinshue.exception.InvalidIpException;
 
+/**
+ *
+ * @author wennier
+ *
+ */
 @RestController
 @RequestMapping("/rest/bridges")
 public class BridgeController implements BridgeService {

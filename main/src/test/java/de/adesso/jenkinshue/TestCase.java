@@ -11,6 +11,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+/**
+ *
+ * @author wennier
+ *
+ */
 @Log4j2
 @ActiveProfiles("h2,secret")
 @RunWith(SpringRunner.class)

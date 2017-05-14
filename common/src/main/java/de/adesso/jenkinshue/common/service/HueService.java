@@ -10,6 +10,11 @@ import de.adesso.jenkinshue.common.dto.lamp.LampWithHueUniqueId;
 import de.adesso.jenkinshue.common.dto.scenario_config.ScenarioConfigDTO;
 import de.adesso.jenkinshue.common.hue.dto.FoundBridgeDTO;
 
+/**
+ *
+ * @author wennier
+ *
+ */
 public interface HueService {
 	
 	void connectToBridgeIfNotAlreadyConnected(BridgeDTO bridge);

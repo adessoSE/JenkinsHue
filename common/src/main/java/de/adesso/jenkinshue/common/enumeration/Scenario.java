@@ -46,7 +46,7 @@ public enum Scenario implements SimpleEnum {
 	
 	private String text;
 	
-	private Scenario(String text) {
+	Scenario(String text) {
 		this.text = text;
 	}
 	

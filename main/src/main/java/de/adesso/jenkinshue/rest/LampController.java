@@ -28,6 +28,11 @@ import de.adesso.jenkinshue.exception.LampAlreadyExistsException;
 import de.adesso.jenkinshue.exception.LampDoesNotExistsException;
 import de.adesso.jenkinshue.exception.TeamDoesNotExistException;
 
+/**
+ *
+ * @author wennier
+ *
+ */
 @RestController
 @RequestMapping("/rest/lamps")
 public class LampController implements LampService {

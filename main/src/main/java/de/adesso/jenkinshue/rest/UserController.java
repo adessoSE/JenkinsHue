@@ -20,6 +20,11 @@ import de.adesso.jenkinshue.common.service.UserService;
 import de.adesso.jenkinshue.exception.InvalidLoginException;
 import de.adesso.jenkinshue.exception.UserAlreadyExistsException;
 
+/**
+ *
+ * @author wennier
+ *
+ */
 @RestController
 @RequestMapping("/rest/users")
 public class UserController implements UserService {

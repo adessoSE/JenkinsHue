@@ -1,7 +1,12 @@
 package de.adesso.jenkinshue.common.jenkins.dto;
 
-public class JenkinsConstants {
-	
-	public static final int DEPTH = 5;
+/**
+ *
+ * @author wennier
+ *
+ */
+class JenkinsConstants {
+
+	static final int DEPTH = 5;
 
 }

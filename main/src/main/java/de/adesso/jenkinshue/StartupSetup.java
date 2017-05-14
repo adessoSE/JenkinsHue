@@ -29,6 +29,11 @@ import de.adesso.jenkinshue.repository.TeamRepository;
 import de.adesso.jenkinshue.repository.UserRepository;
 import lombok.extern.log4j.Log4j2;
 
+/**
+ *
+ * @author wennier
+ *
+ */
 @Log4j2
 @Component
 public class StartupSetup {
