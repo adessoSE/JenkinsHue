@@ -19,11 +19,15 @@ import de.adesso.jenkinshue.repository.JobRepository;
 @Service
 public class JobServiceImpl implements JobService {
 
-	@Autowired
-	private JobRepository jobRepository;
+	private final JobRepository jobRepository;
 	
+	private final Mapper mapper;
+
 	@Autowired
-	private Mapper mapper;
+	public JobServiceImpl(JobRepository jobRepository, Mapper mapper) {
+		this.jobRepository = jobRepository;
+		this.mapper = mapper;
+	}
 	
 	@Override
 	public JobDTO update(JobDTO job) {

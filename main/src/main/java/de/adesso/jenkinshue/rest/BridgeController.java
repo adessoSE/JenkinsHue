@@ -29,8 +29,12 @@ import de.adesso.jenkinshue.exception.InvalidIpException;
 @RequestMapping("/rest/bridges")
 public class BridgeController implements BridgeService {
 
+	private final BridgeService bridgeService;
+
 	@Autowired
-	private BridgeService bridgeService;
+	public BridgeController(BridgeService bridgeService) {
+		this.bridgeService = bridgeService;
+	}
 
 	@Override
 	public List<BridgeDTO> findAll() {

@@ -36,18 +36,22 @@ import de.adesso.jenkinshue.util.ScenarioUtil;
 @Service
 public class TeamServiceImpl implements TeamService {
 
-	@Autowired
-	private TeamRepository teamRepository;
+	private final TeamRepository teamRepository;
 	
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
 	
-	@Autowired
-	private BridgeRepository bridgeRepository;
+	private final BridgeRepository bridgeRepository;
 	
+	private final Mapper mapper;
+
 	@Autowired
-	private Mapper mapper;
-	
+	public TeamServiceImpl(TeamRepository teamRepository, UserRepository userRepository, BridgeRepository bridgeRepository, Mapper mapper) {
+		this.teamRepository = teamRepository;
+		this.userRepository = userRepository;
+		this.bridgeRepository = bridgeRepository;
+		this.mapper = mapper;
+	}
+
 	private List<TeamUsersDTO> map(List<Team> teams) {
 		List<TeamUsersDTO> dtos = new ArrayList<>();
 		for(Team team : teams) {

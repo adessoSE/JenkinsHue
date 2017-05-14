@@ -37,15 +37,19 @@ import lombok.extern.log4j.Log4j2;
 @Component
 public class JobListener {
 	
-	@Autowired
-	private JenkinsService jenkinsService;
+	private final JenkinsService jenkinsService;
 	
-	@Autowired
-	private LampService lampService;
+	private final LampService lampService;
 	
+	private final HueService hueService;
+
 	@Autowired
-	private HueService hueService;
-	
+	public JobListener(JenkinsService jenkinsService, LampService lampService, HueService hueService) {
+		this.jenkinsService = jenkinsService;
+		this.lampService = lampService;
+		this.hueService = hueService;
+	}
+
 	@Async
 	public void updateLamps() {
 		JenkinsDTO jenkinsDTO = jenkinsService.getJenkins();

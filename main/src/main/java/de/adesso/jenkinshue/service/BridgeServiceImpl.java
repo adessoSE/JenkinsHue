@@ -30,17 +30,21 @@ import de.adesso.jenkinshue.repository.UserRepository;
 @Service
 public class BridgeServiceImpl implements BridgeService {
 
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
 	
-	@Autowired
-	private BridgeRepository bridgeRepository;
+	private final BridgeRepository bridgeRepository;
 	
-	@Autowired
-	private HueService hueService;
+	private final HueService hueService;
 	
+	private final Mapper mapper;
+
 	@Autowired
-	private Mapper mapper;
+	public BridgeServiceImpl(UserRepository userRepository, BridgeRepository bridgeRepository, HueService hueService, Mapper mapper) {
+		this.userRepository = userRepository;
+		this.bridgeRepository = bridgeRepository;
+		this.hueService = hueService;
+		this.mapper = mapper;
+	}
 	
 	private List<BridgeDTO> map(List<Bridge> bridges) {
 		List<BridgeDTO> dtos = new ArrayList<>();

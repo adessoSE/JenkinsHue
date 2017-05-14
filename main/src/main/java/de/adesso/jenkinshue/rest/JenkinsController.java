@@ -17,9 +17,13 @@ import de.adesso.jenkinshue.common.service.JenkinsService;
 @RequestMapping("/rest/jenkins")
 public class JenkinsController implements JenkinsService {
 
+	private final JenkinsService jenkinsService;
+
 	@Autowired
-	private JenkinsService jenkinsService;
-	
+	public JenkinsController(JenkinsService jenkinsService) {
+		this.jenkinsService = jenkinsService;
+	}
+
 	@Override
 	@RequestMapping(value = "/url", produces="text/plain")
 	public String getJenkinsUrl() {

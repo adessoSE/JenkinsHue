@@ -49,20 +49,24 @@ import de.adesso.jenkinshue.util.ScenarioUtil;
 @Transactional
 public class LampServiceImpl implements LampService {
 
-	@Autowired
-	private LampRepository lampRepository;
+	private final LampRepository lampRepository;
 	
-	@Autowired
-	private TeamRepository teamRepository;
+	private final TeamRepository teamRepository;
 	
-	@Autowired
-	private HueService hueService;
+	private final HueService hueService;
 	
-	@Autowired
-	private HolidayService holidayService;
+	private final HolidayService holidayService;
 	
+	private final Mapper mapper;
+
 	@Autowired
-	private Mapper mapper;
+	public LampServiceImpl(LampRepository lampRepository, TeamRepository teamRepository, HueService hueService, HolidayService holidayService, Mapper mapper) {
+		this.lampRepository = lampRepository;
+		this.teamRepository = teamRepository;
+		this.hueService = hueService;
+		this.holidayService = holidayService;
+		this.mapper = mapper;
+	}
 	
 	private List<ScenarioConfig> map(List<ScenarioConfigDTO> scenarioConfigDTOs) {
 		List<ScenarioConfig> scenarioConfigs = new ArrayList<>();

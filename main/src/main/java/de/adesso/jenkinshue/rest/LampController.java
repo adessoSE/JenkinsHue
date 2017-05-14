@@ -37,9 +37,13 @@ import de.adesso.jenkinshue.exception.TeamDoesNotExistException;
 @RequestMapping("/rest/lamps")
 public class LampController implements LampService {
 
+	private final LampService lampService;
+
 	@Autowired
-	private LampService lampService;
-	
+	public LampController(LampService lampService) {
+		this.lampService = lampService;
+	}
+
 	@Override
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public LampDTO create(@RequestBody @Valid LampCreateDTO lamp) throws LampAlreadyExistsException {

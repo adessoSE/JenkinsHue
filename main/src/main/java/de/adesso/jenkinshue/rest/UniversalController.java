@@ -32,21 +32,25 @@ import de.adesso.jenkinshue.repository.UserRepository;
 @RequestMapping("/rest/universal")
 public class UniversalController {
 	
-	@Autowired
-	private BridgeService bridgeService;
+	private final BridgeService bridgeService;
 	
-	@Autowired
-	private LampService lampService;
+	private final LampService lampService;
 	
-	@Autowired
-	private UserService userService;
+	private final UserService userService;
 	
-	@Autowired
-	private JobService jobService;
+	private final JobService jobService;
 	
+	private final UserRepository userRepository;
+
 	@Autowired
-	private UserRepository userRepository;
-	
+	public UniversalController(BridgeService bridgeService, LampService lampService, UserService userService, JobService jobService, UserRepository userRepository) {
+		this.bridgeService = bridgeService;
+		this.lampService = lampService;
+		this.userService = userService;
+		this.jobService = jobService;
+		this.userRepository = userRepository;
+	}
+
 	@RequestMapping("/scenarios")
 	public List<Scenario> scenarios() {
 		return Arrays.asList(Scenario.values());

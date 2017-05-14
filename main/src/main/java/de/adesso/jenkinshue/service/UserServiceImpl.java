@@ -34,21 +34,25 @@ import de.adesso.jenkinshue.util.LDAPManager;
 @Transactional
 public class UserServiceImpl implements UserService {
 	
-	@Autowired
-	private TeamRepository teamRepository;
+	private final TeamRepository teamRepository;
 	
-	@Autowired
-	private UserRepository userRepository;
+	private final UserRepository userRepository;
 	
-	@Autowired
-	private BridgeRepository bridgeRepository;
-	
+	private final BridgeRepository bridgeRepository;
+
 	@Autowired(required = false)
 	private LDAPManager ldapManager;
 
+	private final Mapper mapper;
+
 	@Autowired
-	private Mapper mapper;
-	
+	public UserServiceImpl(TeamRepository teamRepository, UserRepository userRepository, BridgeRepository bridgeRepository, Mapper mapper) {
+		this.teamRepository = teamRepository;
+		this.userRepository = userRepository;
+		this.bridgeRepository = bridgeRepository;
+		this.mapper = mapper;
+	}
+
 	private List<UserDTO> map(List<User> users) {
 		List<UserDTO> dtos = new ArrayList<>();
 		for(User user : users) {

@@ -1,5 +1,7 @@
 package de.adesso.jenkinshue.config.security;
 
+import de.adesso.jenkinshue.common.service.UserService;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -8,9 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
-import de.adesso.jenkinshue.common.service.UserService;
-import lombok.extern.log4j.Log4j2;
-
 /**
  * @author wennier
  */
@@ -18,9 +17,12 @@ import lombok.extern.log4j.Log4j2;
 @Component
 public class UserAuthenticationProvider implements AuthenticationProvider {
 
+	final UserService userService;
+
 	@Autowired
-	@Qualifier("userServiceImpl")
-	UserService userService;
+	public UserAuthenticationProvider(@Qualifier("userServiceImpl") UserService userService) {
+		this.userService = userService;
+	}
 
 	@Override
 	public boolean supports(Class<?> authentication) {

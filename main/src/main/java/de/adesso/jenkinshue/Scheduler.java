@@ -18,12 +18,16 @@ public class Scheduler {
 	public static final int INTERVAL = 20000;
 	public static final int LATCH_TIMEOUT = INTERVAL / 4;
 	
-	@Autowired
-	private JobListener jobListener;
+	private final JobListener jobListener;
 	
+	private final HolidayService holidayService;
+
 	@Autowired
-	private HolidayService holidayService;
-	
+	public Scheduler(JobListener jobListener, HolidayService holidayService) {
+		this.jobListener = jobListener;
+		this.holidayService = holidayService;
+	}
+
 	@Scheduled(initialDelay = 1000, fixedDelay = Scheduler.INTERVAL)
 	public void run() {
 		DateTime now = DateTime.now();

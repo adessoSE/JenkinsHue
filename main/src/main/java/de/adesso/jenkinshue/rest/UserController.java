@@ -29,8 +29,12 @@ import de.adesso.jenkinshue.exception.UserAlreadyExistsException;
 @RequestMapping("/rest/users")
 public class UserController implements UserService {
 	
+	private final UserService userService;
+
 	@Autowired
-	private UserService userService;
+	public UserController(UserService userService) {
+		this.userService = userService;
+	}
 
 	@Override
 	public List<UserDTO> findAll() {

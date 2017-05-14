@@ -29,11 +29,15 @@ import java.util.*;
 @ConditionalOnBean(LdapValue.class)
 public class LdapAuthentication {
 
-	@Autowired
-	private LdapValue ldapValue;
+	private final LdapValue ldapValue;
+
+	private final UserRepository userRepository;
 
 	@Autowired
-	private UserRepository userRepository;
+	public LdapAuthentication(LdapValue ldapValue, UserRepository userRepository) {
+		this.ldapValue = ldapValue;
+		this.userRepository = userRepository;
+	}
 
 	public void enable(AuthenticationManagerBuilder auth) throws Exception {
 		auth.ldapAuthentication()

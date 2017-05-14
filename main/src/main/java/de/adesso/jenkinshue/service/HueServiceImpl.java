@@ -68,14 +68,20 @@ public class HueServiceImpl implements HueService {
 	
 	private static final String REPLACE_PORT_REGEX = ":.*";
 	
-	@Autowired
-	private BridgeRepository bridgeRepository;
+	private final BridgeRepository bridgeRepository;
 
 	private PHHueSDK phHueSDK;
 	private PHSDKListener listener;
 
-	private Map<String, String> bridgeStates = Collections.synchronizedMap(new HashMap<>());
-	private List<PHBridge> bridges = Collections.synchronizedList(new ArrayList<PHBridge>());
+	private Map<String, String> bridgeStates;
+	private List<PHBridge> bridges;
+
+	@Autowired
+	public HueServiceImpl(BridgeRepository bridgeRepository) {
+		this.bridgeRepository = bridgeRepository;
+		this.bridgeStates = Collections.synchronizedMap(new HashMap<>());
+		this.bridges = Collections.synchronizedList(new ArrayList<PHBridge>());
+	}
 
 	@PostConstruct
 	public void init() {

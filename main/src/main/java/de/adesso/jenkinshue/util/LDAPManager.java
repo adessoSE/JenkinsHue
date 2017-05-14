@@ -27,8 +27,12 @@ public class LDAPManager implements Serializable {
 
 	private static final long serialVersionUID = -9087546539808571648L;
 
+	private final LdapValue ldapValue;
+
 	@Autowired
-	private LdapValue ldapValue;
+	public LDAPManager(LdapValue ldapValue) {
+		this.ldapValue = ldapValue;
+	}
 
 	private InitialDirContext createContext() throws NamingException {
 		Hashtable<String, String> env = new Hashtable<>();

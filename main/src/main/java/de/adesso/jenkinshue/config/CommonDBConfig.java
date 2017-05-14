@@ -24,9 +24,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories("de.adesso.jenkinshue.repository")
 public class CommonDBConfig {
 
+	private final DataSourceConfigurationType dataSourceConfig;
+
 	@Autowired
-	private DataSourceConfigurationType dataSourceConfig;
-	
+	public CommonDBConfig(DataSourceConfigurationType dataSourceConfig) {
+		this.dataSourceConfig = dataSourceConfig;
+	}
+
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource,
 			JpaVendorAdapter jpaVendorAdapter) {

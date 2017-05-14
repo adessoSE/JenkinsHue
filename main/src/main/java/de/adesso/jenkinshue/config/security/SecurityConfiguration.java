@@ -48,11 +48,15 @@ import java.util.Set;
 @EnableGlobalMethodSecurity(proxyTargetClass = true, prePostEnabled = true/*, securedEnabled = true*/)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	private UserAuthenticationProvider userAuthenticationProvider;
+	private final UserAuthenticationProvider userAuthenticationProvider;
 
 	@Autowired(required = false)
 	private LdapAuthentication ldapAuthentication;
+
+	@Autowired
+	public SecurityConfiguration(UserAuthenticationProvider userAuthenticationProvider) {
+		this.userAuthenticationProvider = userAuthenticationProvider;
+	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {

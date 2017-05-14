@@ -32,8 +32,12 @@ import de.adesso.jenkinshue.exception.TeamDoesNotExistException;
 @RequestMapping("/rest/teams")
 public class TeamController implements TeamService {
 
+	private final TeamService teamService;
+
 	@Autowired
-	private TeamService teamService;
+	public TeamController(TeamService teamService) {
+		this.teamService = teamService;
+	}
 
 	@Override
 	public List<TeamUsersDTO> findAll() {

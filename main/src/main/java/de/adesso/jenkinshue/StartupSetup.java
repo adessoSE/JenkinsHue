@@ -38,24 +38,28 @@ import lombok.extern.log4j.Log4j2;
 @Component
 public class StartupSetup {
 
-	@Autowired
-	private TeamRepository teamRepository;
+	private final TeamRepository teamRepository;
 	
-	@Autowired
-	private TeamService teamService;
+	private final TeamService teamService;
 	
-	@Autowired
-	private UserService userService;
+	private final UserService userService;
 	
-	@Autowired
-	private BridgeService bridgeService;
+	private final BridgeService bridgeService;
 	
-	@Autowired
-	private HueService hueService;
+	private final HueService hueService;
 	
 	@Value("#{'${admins}'.split(',')}")
 	private List<String> admins;
-	
+
+	@Autowired
+	public StartupSetup(TeamRepository teamRepository, TeamService teamService, UserService userService, BridgeService bridgeService, HueService hueService) {
+		this.teamRepository = teamRepository;
+		this.teamService = teamService;
+		this.userService = userService;
+		this.bridgeService = bridgeService;
+		this.hueService = hueService;
+	}
+
 	@PostConstruct
 	public void init() {
 		
