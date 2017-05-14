@@ -15,7 +15,7 @@ import de.adesso.jenkinshue.common.service.HolidayService;
 @Component
 public class Scheduler {
 	
-	public static final int INTERVAL = 20000;
+	private static final int INTERVAL = 20000;
 	public static final int LATCH_TIMEOUT = INTERVAL / 4;
 	
 	private final JobListener jobListener;

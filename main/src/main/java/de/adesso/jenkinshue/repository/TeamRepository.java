@@ -18,7 +18,7 @@ import de.adesso.jenkinshue.entity.Team;
 @Repository
 public interface TeamRepository extends JpaRepository<Team, Long> {
 	
-	public static final String FIND_BY_SEARCH_ITEM = "SELECT t FROM Team t WHERE LOWER(t.name) LIKE %:item%";
+	String FIND_BY_SEARCH_ITEM = "SELECT t FROM Team t WHERE LOWER(t.name) LIKE %:item%";
 
 	Team findByName(String name);
 	

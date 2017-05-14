@@ -11,8 +11,8 @@ import javax.sql.DataSource;
  */
 public interface DataSourceConfigurationType {
 
-	public DataSource dataSource();
+	DataSource dataSource();
 
-	public Properties getJpaProperties();
+	Properties getJpaProperties();
 	
 }

@@ -78,10 +78,8 @@ public class StartupSetup {
 					if(anAdmin == null) {
 						anAdmin = tmp;
 					}
-				} catch(UserAlreadyExistsException uaee) {
-					log.error(uaee);
-				} catch(InvalidLoginException ile) {
-					log.error(ile);
+				} catch(UserAlreadyExistsException | InvalidLoginException e) {
+					log.error(e);
 				}
 			}
 

@@ -51,7 +51,7 @@ public class JobListener {
 	}
 
 	@Async
-	public void updateLamps() {
+	void updateLamps() {
 		JenkinsDTO jenkinsDTO = jenkinsService.getJenkins();
 		List<JenkinsJobDTO> jenkinsJobs = jenkinsDTO.getJobs();
 

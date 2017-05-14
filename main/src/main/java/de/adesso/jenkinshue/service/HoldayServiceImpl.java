@@ -47,11 +47,7 @@ public class HoldayServiceImpl implements HolidayService {
 		if(workingStart.isAfter(workingEnd)) {
 			return false;
 		} else {
-			if(workingStart.getMinuteOfDay() >= 15 && workingEnd.getMinuteOfDay() <= 1425) {
-				return true;
-			} else {
-				return false;
-			}
+			return workingStart.getMinuteOfDay() >= 15 && workingEnd.getMinuteOfDay() <= 1425;
 		}
 	}
 

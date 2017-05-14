@@ -18,7 +18,7 @@ import de.adesso.jenkinshue.entity.Bridge;
 @Repository
 public interface BridgeRepository extends JpaRepository<Bridge, Long> {
 
-	public static final String findBySearchItem = "SELECT b FROM Bridge b LEFT JOIN b.user u  WHERE LOWER(u.email) LIKE %:item% OR LOWER(b.ip) LIKE %:item%";
+	String findBySearchItem = "SELECT b FROM Bridge b LEFT JOIN b.user u  WHERE LOWER(u.email) LIKE %:item% OR LOWER(b.ip) LIKE %:item%";
 
 	Bridge findByIp(String ip);
 
