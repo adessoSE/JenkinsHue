@@ -36,6 +36,7 @@ services:
      - jenkins.url=TODO
      - jenkins.userName=TODO
      - jenkins.password=TODO
+     - admins=admin1
    # OPTIONAL
    # - ldap.server.domain=
    # - ldap.server.url= e.g. ldaps://xxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxx.de
@@ -74,6 +75,7 @@ services:
      - jenkins.url=TODO
      - jenkins.userName=TODO
      - jenkins.password=TODO
+     - admins=admin1
    # OPTIONAL
    # - ldap.server.domain=
    # - ldap.server.url= e.g. ldaps://xxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxx.de
