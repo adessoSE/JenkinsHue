@@ -50,7 +50,6 @@ public class PostgreSQLDBConfig implements DataSourceConfigurationType {
 		Properties jpaProperties = new Properties();
 		jpaProperties.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
 		jpaProperties.setProperty("hibernate.format_sql", "false");
-		jpaProperties.setProperty("hibernate.temp.use_jdbc_metadata_defaults", "false");
 		jpaProperties.setProperty("hibernate.hbm2ddl.auto", hbm2ddlAuto);
 		return jpaProperties;
 	}
