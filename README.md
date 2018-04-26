@@ -14,15 +14,88 @@ This is the implementation of my IHK project (Fiete Wennier, June 2016). It show
 - LDAP server (recommended, not necessary)
 
 ### Usage
-- Download the latest release
-- Unzip the release
-- Set the required properties in the application.properties file
+- Install [Docker Compose](https://docs.docker.com/compose/install/)
+- Create a docker-compose.yml
 - Run it with...
 ```sh
-java -jar name_of_the_jar.jar
+docker-compose up
 ```
 - Visit [http://localhost:8484/](http://localhost:8484/)
 - If no ldap connection is specified you can login with username = password (property 'admins')
+
+1) docker-compose.yml with an in-memory database
+```
+version: '2'
+services:
+  jh:
+    restart: always
+    image: fi3te/jenkins-hue
+    container_name: jh-app
+    environment:
+     - "TZ=Europe/Berlin"
+     - jenkins.url=TODO
+     - jenkins.userName=TODO
+     - jenkins.password=TODO
+   # OPTIONAL
+   # - ldap.server.domain=
+   # - ldap.server.url= e.g. ldaps://xxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxx.de
+   # - ldap.server.userSearchFilter= e.g. (&(xxxxxxxxxxxxxxxxxxxxx={0})(objectclass=user))
+   # - ldap.server.userSearchBase=
+   # - ldap.server.groupSearchBase=
+   # - ldap.server.userDn= e.g. CN=xxxxxxxxxxxxxxxxxxxxx,OU=xxxxxxxxxxxxxxxxxxxxx,DC=xxxxxxxxxxxxxxxxxxxxx
+   # - ldap.server.userName=
+   # - ldap.server.password=
+   # - trust-store= e.g. filename.ending
+   # - trust-store-password=
+    ports:
+     - "127.0.0.1:8484:8484"
+```
+
+2) docker-compose.yml with a PostgreSQL database
+```
+version: '2'
+services: 
+  postgres:
+    restart: always
+    image: postgres:10
+    container_name: jh-postgres
+    environment:
+      POSTGRES_PASSWORD: postgres-password-example
+    volumes_from:
+     - data
+  jh:
+    restart: always
+    image: fi3te/jenkins-hue
+    container_name: jh-app
+    environment:
+     - "TZ=Europe/Berlin"
+     - spring.profiles.active=postgre,live
+     - spring.datasource.password=postgres-password-example
+     - jenkins.url=TODO
+     - jenkins.userName=TODO
+     - jenkins.password=TODO
+   # OPTIONAL
+   # - ldap.server.domain=
+   # - ldap.server.url= e.g. ldaps://xxxxxxxxxxxxxxxxxxxxx.xxxxxxxxxxxxxxxxxxxxx.de
+   # - ldap.server.userSearchFilter= e.g. (&(xxxxxxxxxxxxxxxxxxxxx={0})(objectclass=user))
+   # - ldap.server.userSearchBase=
+   # - ldap.server.groupSearchBase=
+   # - ldap.server.userDn= e.g. CN=xxxxxxxxxxxxxxxxxxxxx,OU=xxxxxxxxxxxxxxxxxxxxx,DC=xxxxxxxxxxxxxxxxxxxxx
+   # - ldap.server.userName=
+   # - ldap.server.password=
+   # - trust-store= e.g. filename.ending
+   # - trust-store-password=
+    ports:
+     - "127.0.0.1:8484:8484"
+    depends_on:
+     - postgres
+  data:
+    image: tianon/true
+    container_name: jh-data
+    volumes:
+     - /var/lib/postgresql/data
+
+```
 
 ### Bridge discovery
 
