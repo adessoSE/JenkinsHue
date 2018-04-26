@@ -97,6 +97,8 @@ services:
 
 ```
 
+The docker image can be found [here](https://hub.docker.com/r/fi3te/jenkins-hue/).
+
 ### Bridge discovery
 
 The bridge can be discovered automatically via N-UPnP. Therefore it needs an internet connection.
