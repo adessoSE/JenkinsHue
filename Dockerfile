@@ -5,7 +5,7 @@ COPY pom.xml /usr/jh
 RUN mvn -f /usr/jh/pom.xml clean package
 
 FROM openjdk:8
-COPY --from=build /usr/jh/main/target/main-0.0.1-SNAPSHOT.jar /usr/jh/jh.jar
+COPY --from=build /usr/jh/main/target/main-1.0.0.jar /usr/jh/jh.jar
 EXPOSE 8484
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/urandom", "-jar", "/usr/jh/jh.jar"]
 CMD ["bash"]
