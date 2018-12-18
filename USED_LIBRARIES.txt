@@ -7,9 +7,6 @@ Licensed under the MIT License (copy below)
 Joda-Time
 Licensed under the Apache License, Version 2.0 (copy below)
 
-wro4j (core + maven-plugin)
-Licensed under the Apache License, Version 2.0 (copy below)
-
 Commons Lang
 Licensed under the Apache License, Version 2.0 (copy below)
 
@@ -34,47 +31,6 @@ com.philips.huesdkresources
 
 H2 Database Engine
 PostgreSQL JDBC Driver
-
-
-
-AngularJS
-Licensed under the MIT License (copy below)
-
-Admin-LTE
-Licensed under the MIT License (copy below)
-
-Bootstrap
-Licensed under the MIT License (copy below)
-
-Font Awesome
-Licensed under the MIT License (copy below)
-
-ionicons
-Licensed under the MIT License (copy below)
-
-angular-bootstrap-colorpicker
-Licensed under the MIT License (copy below)
-
-angular-growl-2
-Licensed under the MIT License (copy below)
-
-bootstrap-slider
-Licensed under the MIT License (copy below)
-
-ng-sortable
-Licensed under the MIT License (copy below)
-
-ui-bootstrap
-Licensed under the MIT License (copy below)
-
-ui-bootstrap-timepicker
-Licensed under the MIT License (copy below)
-
-ui-select
-Licensed under the MIT License (copy below)
-
-jquery
-Licensed under the MIT License (copy below)
 
 
 

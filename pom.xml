@@ -24,7 +24,6 @@
         <postgresql.version>42.2.2</postgresql.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <wro4j.version>1.8.0</wro4j.version>
 	</properties>
 
 	<dependencies>
@@ -97,12 +96,6 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>${postgresql.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>ro.isdc.wro4j</groupId>
-			<artifactId>wro4j-core</artifactId>
-			<version>${wro4j.version}</version>
 		</dependency>
 
 	</dependencies>
