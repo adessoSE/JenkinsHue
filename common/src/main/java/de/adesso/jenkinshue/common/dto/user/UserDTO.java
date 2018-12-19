@@ -30,16 +30,16 @@ public class UserDTO implements Serializable {
 	
 	private String surname;
 	
-	private TeamDTO team;
+	private UserDTO_TeamDTO team;
 	
-	private List<BridgeDTO> bridges;
+	private List<UserDTO_BridgeDTO> bridges;
 	
 	private List<Role> roles;
 	
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class TeamDTO implements Serializable {
+	public static class UserDTO_TeamDTO implements Serializable {
 		
 		private static final long serialVersionUID = -6733627068464578062L;
 
@@ -52,7 +52,7 @@ public class UserDTO implements Serializable {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class BridgeDTO implements Serializable {
+	public static class UserDTO_BridgeDTO implements Serializable {
 		
 		private static final long serialVersionUID = -2559524612111310272L;
 

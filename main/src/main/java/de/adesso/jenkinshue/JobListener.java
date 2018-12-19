@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import de.adesso.jenkinshue.common.dto.job.JobDTO;
 import de.adesso.jenkinshue.common.dto.lamp.LampDTO;
 import de.adesso.jenkinshue.common.dto.lamp.LampHueDTO;
-import de.adesso.jenkinshue.common.dto.lamp.LampDTO.TeamDTO;
+import de.adesso.jenkinshue.common.dto.lamp.LampDTO.LampDTO_TeamDTO;
 import de.adesso.jenkinshue.common.dto.lamp.LampNameDTO;
 import de.adesso.jenkinshue.common.dto.lamp.LampTurnOffDTO;
 import de.adesso.jenkinshue.common.dto.lamp.LampUpdateLastShownScenarioDTO;
@@ -73,7 +73,7 @@ public class JobListener {
 			LampNameDTO turnOffThisLamp = new LampNameDTO(lamp.getId(), lamp.getHueUniqueId(), lamp.getName());
 			hueService.turnOff(new LampTurnOffDTO(Arrays.asList(turnOffThisLamp)));
 		} else {
-			TeamDTO team = lamp.getTeam();
+			LampDTO_TeamDTO team = lamp.getTeam();
 			List<Scenario> scenarioPriority = team.getScenarioPriority();
 
 			int highestPriority = Integer.MAX_VALUE;

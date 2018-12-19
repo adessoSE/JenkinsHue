@@ -3,4 +3,6 @@
 .project
 .settings/
 
+generated-dtos.model.ts
+
 target/

@@ -244,7 +244,7 @@ public class LampServiceImpl implements LampService {
 		if(team != null) {
 			TeamLampsDTO dto = mapper.map(team, TeamLampsDTO.class);
 			for(int i = 0; i < team.getLamps().size(); i++) {
-				TeamLampsDTO.LampDTO lampDTO = dto.getLamps().get(i);
+				TeamLampsDTO.TeamLampsDTO_LampDTO lampDTO = dto.getLamps().get(i);
 				setGroupedScenarioConfigs(lampDTO, team.getLamps().get(i).getScenarioConfigs());
 			}
 			return dto;
@@ -258,7 +258,7 @@ public class LampServiceImpl implements LampService {
 		TeamLampsDTO teamLampsDTO = findAllOfATeam(teamId);
 		List<LampNameDTO> lamps = new ArrayList<>();
 		if(teamLampsDTO.getLamps() != null) {
-			for(TeamLampsDTO.LampDTO l : teamLampsDTO.getLamps()) {
+			for(TeamLampsDTO.TeamLampsDTO_LampDTO l : teamLampsDTO.getLamps()) {
 				lamps.add(new LampNameDTO(l.getId(), l.getHueUniqueId(), l.getName()));
 			}
 		}

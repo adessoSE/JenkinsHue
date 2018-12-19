@@ -26,14 +26,14 @@ public class BridgeDTO implements Serializable {
 	
 	private String hueUserName;
 	
-	private UserDTO user;
+	private BridgeDTO_UserDTO user;
 	
 	private String state;
 	
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class UserDTO implements Serializable {
+	public static class BridgeDTO_UserDTO implements Serializable {
 		
 		private static final long serialVersionUID = 6103691782171217524L;
 		

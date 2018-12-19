@@ -27,12 +27,12 @@ public class TeamUsersDTO implements Serializable {
 	
 	private List<Scenario> scenarioPriority;
 	
-	private List<UserDTO> users;
+	private List<TeamUsersDTO_UserDTO> users;
 	
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class UserDTO implements Serializable {
+	public static class TeamUsersDTO_UserDTO implements Serializable {
 		
 		private static final long serialVersionUID = 713609152508817433L;
 		

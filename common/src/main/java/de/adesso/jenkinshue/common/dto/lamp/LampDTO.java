@@ -39,12 +39,12 @@ public class LampDTO implements LampWithHueUniqueId, Serializable {
 
 	private List<ScenarioConfigDTO> scenarioConfigs;
 	
-	private TeamDTO team;
+	private LampDTO_TeamDTO team;
 	
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class TeamDTO implements Serializable {
+	public static class LampDTO_TeamDTO implements Serializable {
 		
 		private static final long serialVersionUID = 2784384297925830509L;
 
