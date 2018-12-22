@@ -48,7 +48,11 @@ public class UserServiceImplTest extends TestCase {
 	@Test(expected = EmptyInputException.class)
 	public void testCreateWithEmptyInput() {
 		TeamLampsDTO team = teamService.create(new TeamCreateDTO("Team 1"));
-		userService.create(new UserCreateDTO(null, team.getId()));
+		try {
+			userService.create(new UserCreateDTO(null, team.getId()));
+		} catch (EmptyInputException eie) {
+			userService.create(new UserCreateDTO("", team.getId()));
+		}
 		fail();
 	}
 

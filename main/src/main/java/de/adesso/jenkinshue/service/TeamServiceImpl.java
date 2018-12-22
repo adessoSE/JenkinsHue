@@ -92,7 +92,10 @@ public class TeamServiceImpl implements TeamService {
 	}
 
 	@Override
-	public TeamLampsDTO create(TeamCreateDTO team) throws TeamAlreadyExistsException {
+	public TeamLampsDTO create(TeamCreateDTO team) throws EmptyInputException, TeamAlreadyExistsException {
+		if (team.getName() == null || team.getName().trim().isEmpty()) {
+			throw new EmptyInputException();
+		}
 		team.setName(team.getName().trim());
 		if(teamRepository.findByName(team.getName()) != null) {
 			throw new TeamAlreadyExistsException(team.getName());
@@ -132,7 +135,7 @@ public class TeamServiceImpl implements TeamService {
 	public TeamUsersDTO rename(TeamRenameDTO team) throws TeamDoesNotExistException, TeamAlreadyExistsException, EmptyInputException {
 		Team t = teamRepository.findOne(team.getId());
 		if(t != null) {
-			if(team.getName() == null || team.getName().isEmpty()) { // Name ungueltig
+			if(team.getName() == null || team.getName().trim().isEmpty()) { // Name ungueltig
 				throw new EmptyInputException();
 			} else if(t.getName().equals(team.getName())) { // Name hat sich nicht geaendert
 				return mapper.map(t, TeamUsersDTO.class);
