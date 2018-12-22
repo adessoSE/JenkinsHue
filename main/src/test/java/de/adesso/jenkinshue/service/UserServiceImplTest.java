@@ -5,10 +5,14 @@ import de.adesso.jenkinshue.common.dto.team.TeamCreateDTO;
 import de.adesso.jenkinshue.common.dto.team.TeamLampsDTO;
 import de.adesso.jenkinshue.common.dto.user.UserCreateDTO;
 import de.adesso.jenkinshue.common.dto.user.UserDTO;
+import de.adesso.jenkinshue.common.dto.user.UserUpdateDTO;
 import de.adesso.jenkinshue.common.service.TeamService;
 import de.adesso.jenkinshue.common.service.UserService;
+import de.adesso.jenkinshue.exception.EmptyInputException;
 import de.adesso.jenkinshue.exception.InvalidLoginException;
+import de.adesso.jenkinshue.exception.TeamDoesNotExistException;
 import de.adesso.jenkinshue.exception.UserAlreadyExistsException;
+import de.adesso.jenkinshue.exception.UserDoesNotExistException;
 import lombok.extern.log4j.Log4j2;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +45,19 @@ public class UserServiceImplTest extends TestCase {
 		assertNotNull(user);
 	}
 
+	@Test(expected = EmptyInputException.class)
+	public void testCreateWithEmptyInput() {
+		TeamLampsDTO team = teamService.create(new TeamCreateDTO("Team 1"));
+		userService.create(new UserCreateDTO(null, team.getId()));
+		fail();
+	}
+
+	@Test(expected = TeamDoesNotExistException.class)
+	public void testCreateWithoutExistingTeam() {
+		userService.create(new UserCreateDTO("wennier", -1));
+		fail();
+	}
+
 	@Test(expected = UserAlreadyExistsException.class)
 	public void testCreateAlreadyExistingUser() {
 		TeamLampsDTO team = teamService.create(new TeamCreateDTO("Team 1"));
@@ -69,4 +86,9 @@ public class UserServiceImplTest extends TestCase {
 		}
 	}
 
+	@Test(expected = UserDoesNotExistException.class)
+	public void testUpdateUserWithoutValidId() {
+		userService.update(new UserUpdateDTO(-1, null));
+		fail();
+	}
 }

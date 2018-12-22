@@ -5,6 +5,11 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import de.adesso.jenkinshue.entity.Team;
+import de.adesso.jenkinshue.exception.EmptyInputException;
+import de.adesso.jenkinshue.exception.TeamDoesNotExistException;
+import de.adesso.jenkinshue.exception.UserDoesNotExistException;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
@@ -25,7 +30,7 @@ import de.adesso.jenkinshue.repository.UserRepository;
 import de.adesso.jenkinshue.util.LDAPManager;
 
 /**
- * 
+ *
  * @author wennier
  *
  */
@@ -33,11 +38,11 @@ import de.adesso.jenkinshue.util.LDAPManager;
 @Service
 @Transactional
 public class UserServiceImpl implements UserService {
-	
+
 	private final TeamRepository teamRepository;
-	
+
 	private final UserRepository userRepository;
-	
+
 	private final BridgeRepository bridgeRepository;
 
 	@Autowired(required = false)
@@ -55,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
 	private List<UserDTO> map(List<User> users) {
 		List<UserDTO> dtos = new ArrayList<>();
-		for(User user : users) {
+		for (User user : users) {
 			UserDTO dto = mapper.map(user, UserDTO.class);
 			dtos.add(dto);
 		}
@@ -91,40 +96,51 @@ public class UserServiceImpl implements UserService {
 	public long count(String searchItem) {
 		return userRepository.count(searchItem.toLowerCase());
 	}
-	
+
 	@Override
 	public long count(long teamId) {
 		return userRepository.count(teamId);
 	}
 
 	@Override
-	public UserDTO create(UserCreateDTO user) throws UserAlreadyExistsException, InvalidLoginException {
-		String login = user.getLogin().toLowerCase();
-		if(userRepository.findByLogin(login) != null) {
-			throw new UserAlreadyExistsException(login);
+	public UserDTO create(UserCreateDTO user) throws EmptyInputException, TeamDoesNotExistException,
+			UserAlreadyExistsException, InvalidLoginException {
+		if (user.getLogin() == null || user.getLogin().trim().isEmpty()) {
+			throw new EmptyInputException();
+		}
+		user.setLogin(user.getLogin().trim().toLowerCase());
+		Team team = teamRepository.findOne(user.getTeamId());
+		if (team == null) {
+			throw new TeamDoesNotExistException(user.getTeamId());
+		}
+		if (userRepository.findByLogin(user.getLogin()) != null) {
+			throw new UserAlreadyExistsException(user.getLogin());
 		}
 
-		User u = null;
+		User u;
 		//noinspection ConstantConditions
-		if(ldapManager != null) {
-			u = ldapManager.getUserForLoginName(login);
+		if (ldapManager != null) {
+			u = ldapManager.getUserForLoginName(user.getLogin());
 			if (u == null) {
-				throw new InvalidLoginException(login);
+				throw new InvalidLoginException(user.getLogin());
 			}
 		} else {
 			u = new User();
-			u.setLogin(login);
+			u.setLogin(user.getLogin());
 		}
 
-		u.setTeam(teamRepository.findOne(user.getTeamId()));
+		u.setTeam(team);
 		u = userRepository.save(u);
 
 		return mapper.map(u, UserDTO.class);
 	}
-	
+
 	@Override
-	public UserDTO update(UserUpdateDTO user) {
+	public UserDTO update(UserUpdateDTO user) throws UserDoesNotExistException {
 		User userInDB = userRepository.findOne(user.getId());
+		if (userInDB == null) {
+			throw new UserDoesNotExistException(user.getId());
+		}
 		userInDB.setRoles(user.getRoles());
 		userInDB = userRepository.save(userInDB);
 		return mapper.map(userInDB, UserDTO.class);
@@ -133,9 +149,9 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public void remove(long id) {
 		User user = userRepository.findOne(id);
-		if(user != null) {
+		if (user != null) {
 			List<Bridge> bridges = user.getBridges();
-			for(Bridge bridge : bridges) {
+			for (Bridge bridge : bridges) {
 				bridge.setUser(null);
 				bridgeRepository.save(bridge);
 			}
@@ -146,7 +162,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDTO findByLogin(String login) {
 		User user = userRepository.findByLogin(login);
-		if(user != null) {
+		if (user != null) {
 			return mapper.map(user, UserDTO.class);
 		} else {
 			return null;
