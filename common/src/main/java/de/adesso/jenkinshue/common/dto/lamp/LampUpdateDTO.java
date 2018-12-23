@@ -25,17 +25,11 @@ public class LampUpdateDTO implements Serializable {
 	
 	private long id;
 
-	private String hueUniqueId;
-
-	private String name;
-
 	private Date workingStart;
 
 	private Date workingEnd;
 	
 	private List<JobDTO> jobs;
-	
-	private Scenario lastShownScenario;
 	
 	private List<ScenarioConfigDTO> buildingConfigs;
 	
@@ -45,6 +39,4 @@ public class LampUpdateDTO implements Serializable {
 	
 	private List<ScenarioConfigDTO> successConfigs;
 	
-	private long teamId;
-
 }

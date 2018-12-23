@@ -86,10 +86,8 @@ public class JobServiceImplTest extends TestCase {
 		assertEquals(0, jobService.countNameDistinctly(team.getId()));
 		
 		LampUpdateDTO lampUpdateDTO = new LampUpdateDTO();
-		lampUpdateDTO.setHueUniqueId(lampDTO.getHueUniqueId());
 		lampUpdateDTO.setId(lampDTO.getId());
-		lampUpdateDTO.setName(lampDTO.getName());
-		
+
 		lampUpdateDTO.setBuildingConfigs(new ArrayList<>());
 		lampUpdateDTO.setFailureConfigs(new ArrayList<>());
 		lampUpdateDTO.setUnstableConfigs(new ArrayList<>());
@@ -108,7 +106,7 @@ public class JobServiceImplTest extends TestCase {
 			}
 		}
 		
-		List<String> jobNames = Arrays.asList(new String[]{ "JobA", "JobB", "JobB", "JobB" });
+		List<String> jobNames = Arrays.asList("JobA", "JobB", "JobB", "JobB");
 		List<JobDTO> jobs = new ArrayList<>();
 		for(String name : jobNames) {
 			jobs.add(new JobDTO(0, name));
@@ -116,7 +114,6 @@ public class JobServiceImplTest extends TestCase {
 		lampUpdateDTO.setJobs(jobs);
 		lampUpdateDTO.setWorkingStart(lampDTO.getWorkingStart());
 		lampUpdateDTO.setWorkingEnd(lampDTO.getWorkingEnd());
-		lampUpdateDTO.setTeamId(lampDTO.getTeam().getId());
 		lampService.update(lampUpdateDTO);
 		
 		assertEquals(2, jobService.countNameDistinctly(team.getId()));
