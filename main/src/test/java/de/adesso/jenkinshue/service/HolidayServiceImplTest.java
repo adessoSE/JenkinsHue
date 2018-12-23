@@ -38,6 +38,7 @@ public class HolidayServiceImplTest extends TestCase {
 		assertTrue(holidayService.isHoliday(new DateTime(2016, 12, 31, 0, 0)));
 		
 		assertFalse(holidayService.isHoliday(new DateTime(2016, 1, 4, 0, 0)));
+		assertFalse(holidayService.isHoliday(null));
 	}
 	
 	@Test
@@ -46,6 +47,7 @@ public class HolidayServiceImplTest extends TestCase {
 		assertTrue(holidayService.isWeekend(new DateTime(2016, 1, 2, 0, 0)));
 		assertTrue(holidayService.isWeekend(new DateTime(2016, 1, 3, 0, 0)));
 		assertFalse(holidayService.isWeekend(new DateTime(2016, 1, 4, 0, 0)));
+		assertFalse(holidayService.isWeekend(null));
 	}
 	
 	@Test
@@ -71,6 +73,8 @@ public class HolidayServiceImplTest extends TestCase {
 		
 		assertTrue(holidayService.isValidWorkingPeriod(h08m00, h16m00));
 		assertFalse(holidayService.isValidWorkingPeriod(h16m00, h08m00));
-	}
 
+		assertFalse(holidayService.isValidWorkingPeriod(null, h16m00));
+		assertFalse(holidayService.isValidWorkingPeriod(h08m00, null));
+	}
 }
