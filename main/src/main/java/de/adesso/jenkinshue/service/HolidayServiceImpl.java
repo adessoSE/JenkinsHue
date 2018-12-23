@@ -46,11 +46,15 @@ public class HolidayServiceImpl implements HolidayService {
 				|| day.getDayOfWeek() == DateTimeConstants.SUNDAY);
 	}
 
+	/**
+	 * Millis of day are crucial
+	 * TODO replace DateTime with LocalTime
+	 */
 	@Override
 	public boolean isValidWorkingPeriod(DateTime workingStart, DateTime workingEnd) {
 		if (workingStart == null || workingEnd == null) {
 			return false;
-		} else if (workingStart.isAfter(workingEnd)) {
+		} else if (workingEnd.getMillisOfDay() < workingStart.getMillisOfDay()) {
 			return false;
 		} else {
 			return workingStart.getMinuteOfDay() >= 15 && workingEnd.getMinuteOfDay() <= 1425;
