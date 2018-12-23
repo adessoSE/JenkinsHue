@@ -21,7 +21,6 @@ import de.adesso.jenkinshue.common.enumeration.BuildState;
 import de.adesso.jenkinshue.common.service.JobService;
 import de.adesso.jenkinshue.common.service.LampService;
 import de.adesso.jenkinshue.common.service.TeamService;
-import de.adesso.jenkinshue.dozer.Mapper;
 import de.adesso.jenkinshue.entity.Job;
 import de.adesso.jenkinshue.repository.JobRepository;
 
@@ -43,25 +42,6 @@ public class JobServiceImplTest extends TestCase {
 	
 	@Autowired
 	private LampService lampService;
-	
-	@Autowired
-	private Mapper mapper;
-	
-	@Test
-	public void testUpdate() {
-		assertEquals(0, jobRepository.count());
-		
-		final String NAME = "Job umbenannt";
-		
-		Job job = new Job(0, "Job 1");
-		job = jobRepository.save(job);
-		
-		JobDTO jobDTO = mapper.map(job, JobDTO.class);
-		jobDTO.setName(NAME);
-		jobDTO = jobService.update(jobDTO);
-		
-		assertEquals(NAME, jobRepository.findOne(job.getId()).getName());
-	}
 	
 	@Test
 	public void testCountNameDistinctly() {
