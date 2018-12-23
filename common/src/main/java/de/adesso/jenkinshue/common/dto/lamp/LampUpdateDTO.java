@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LampUpdateDTO implements Serializable {
+public class LampUpdateDTO implements Serializable, GroupedScenarioConfigsLamp {
 	
 	private static final long serialVersionUID = -4851338323894376390L;
 	
