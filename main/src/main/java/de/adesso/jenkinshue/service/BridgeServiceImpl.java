@@ -3,6 +3,8 @@ package de.adesso.jenkinshue.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.adesso.jenkinshue.entity.User;
+import de.adesso.jenkinshue.exception.UserDoesNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
@@ -10,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import de.adesso.jenkinshue.common.dto.bridge.BridgeCreateDTO;
 import de.adesso.jenkinshue.common.dto.bridge.BridgeDTO;
-import de.adesso.jenkinshue.common.dto.bridge.BridgeUpdateDTO;
 import de.adesso.jenkinshue.common.hue.dto.FoundBridgeDTO;
 import de.adesso.jenkinshue.common.service.BridgeService;
 import de.adesso.jenkinshue.common.service.HueService;
@@ -99,16 +100,21 @@ public class BridgeServiceImpl implements BridgeService {
 	}
 
 	@Override
-	public BridgeDTO create(BridgeCreateDTO bridge) throws InvalidIpException, BridgeAlreadyExistsException {
-		if(!isIPv4Address(bridge.getIp())) {
+	public BridgeDTO create(BridgeCreateDTO bridge) throws InvalidIpException, BridgeAlreadyExistsException,
+			UserDoesNotExistException {
+		if (!isIPv4Address(bridge.getIp())) {
 			throw new InvalidIpException(bridge.getIp());
 		} else if(bridgeRepository.findByIp(bridge.getIp()) != null) {
 			throw new BridgeAlreadyExistsException(bridge.getIp());
 		}
-		
+		User user = userRepository.findOne(bridge.getUserId());
+		if (user == null) {
+			throw new UserDoesNotExistException(bridge.getUserId());
+		}
+
 		Bridge b = new Bridge();
 		b.setIp(bridge.getIp());
-		b.setUser(userRepository.findOne(bridge.getUserId()));
+		b.setUser(user);
 		
 		b = bridgeRepository.save(b);
 		
@@ -118,14 +124,6 @@ public class BridgeServiceImpl implements BridgeService {
 //		hueService.updateBridgeState(Arrays.asList(dto)); nicht noetig, da die Bridge nach einer Verzögerung erneut abgefragt werden
 		
 		return dto;
-	}
-
-	@Override
-	public BridgeDTO update(BridgeUpdateDTO bridge) {
-		Bridge b = mapper.map(bridge, Bridge.class);
-		b.setUser(userRepository.findOne(bridge.getUserId()));
-		b = bridgeRepository.save(b);
-		return mapper.map(b, BridgeDTO.class);
 	}
 
 	@Override
