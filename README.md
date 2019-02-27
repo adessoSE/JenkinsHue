@@ -29,7 +29,7 @@ version: '2'
 services:
   jh:
     restart: always
-    image: fi3te/jenkins-hue
+    image: fi3te/jenkins-hue:version-1.0.0
     container_name: jh-app
     environment:
      - "TZ=Europe/Berlin"
@@ -66,7 +66,7 @@ services:
      - data
   jh:
     restart: always
-    image: fi3te/jenkins-hue
+    image: fi3te/jenkins-hue:version-1.0.0
     container_name: jh-app
     environment:
      - "TZ=Europe/Berlin"
