@@ -148,7 +148,7 @@ services:
     expose:
      - "80"
     ports:
-     - "80:80"
+     - "8484:80"
     depends_on:
       - jh-backend
     networks:
@@ -208,7 +208,7 @@ services:
     expose:
      - "80"
     ports:
-     - "80:80"
+     - "8484:80"
     depends_on:
       - jh-backend
     networks:
