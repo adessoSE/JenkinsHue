@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import de.adesso.jenkinshue.exception.EmptyInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,7 +47,7 @@ public class LampController implements LampService {
 
 	@Override
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public LampDTO create(@RequestBody @Valid LampCreateDTO lamp) throws LampAlreadyExistsException {
+	public LampDTO create(@RequestBody @Valid LampCreateDTO lamp) throws EmptyInputException, TeamDoesNotExistException, LampAlreadyExistsException {
 		return lampService.create(lamp);
 	}
 
@@ -63,7 +64,7 @@ public class LampController implements LampService {
 	
 	@Override
 	@RequestMapping(value = "/rename", method = RequestMethod.POST)
-	public LampDTO rename(@RequestBody @Valid LampRenameDTO lamp) throws LampDoesNotExistsException {
+	public LampDTO rename(@RequestBody @Valid LampRenameDTO lamp) throws EmptyInputException, LampDoesNotExistsException {
 		return lampService.rename(lamp);
 	}
 	

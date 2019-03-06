@@ -4,6 +4,9 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import de.adesso.jenkinshue.exception.EmptyInputException;
+import de.adesso.jenkinshue.exception.TeamDoesNotExistException;
+import de.adesso.jenkinshue.exception.UserDoesNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -88,14 +91,15 @@ public class UserController implements UserService {
 
 	@Override
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public UserDTO create(@RequestBody @Valid UserCreateDTO user) throws UserAlreadyExistsException, InvalidLoginException {
+	public UserDTO create(@RequestBody @Valid UserCreateDTO user) throws EmptyInputException, TeamDoesNotExistException,
+			UserAlreadyExistsException, InvalidLoginException {
 		return userService.create(user);
 	}
 
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public UserDTO update(@RequestBody @Valid UserUpdateDTO user) {
+	public UserDTO update(@RequestBody @Valid UserUpdateDTO user) throws UserDoesNotExistException {
 		return userService.update(user);
 	}
 

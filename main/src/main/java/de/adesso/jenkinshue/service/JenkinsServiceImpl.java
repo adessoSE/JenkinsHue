@@ -98,13 +98,13 @@ public class JenkinsServiceImpl implements JenkinsService {
 		return new JenkinsJobNamesDTO(getJobNames(dto, null));
 	}
 	
-	List<JenkinsJobNamesDTO.JobDTO> getJobNames(JenkinsFolderStructureDTO dto, String folderName) {
-		List<JenkinsJobNamesDTO.JobDTO> jobNames = new ArrayList<>();
+	List<JenkinsJobNamesDTO.JenkinsJobNamesDTO_JobDTO> getJobNames(JenkinsFolderStructureDTO dto, String folderName) {
+		List<JenkinsJobNamesDTO.JenkinsJobNamesDTO_JobDTO> jobNames = new ArrayList<>();
 		if(dto.getJobs() == null) { // it is a job
 			if(folderName == null || folderName.isEmpty()) {
-				jobNames.add(new JenkinsJobNamesDTO.JobDTO(dto.getName()));
+				jobNames.add(new JenkinsJobNamesDTO.JenkinsJobNamesDTO_JobDTO(dto.getName()));
 			} else {
-				jobNames.add(new JenkinsJobNamesDTO.JobDTO(folderName + "/" + dto.getName()));
+				jobNames.add(new JenkinsJobNamesDTO.JenkinsJobNamesDTO_JobDTO(folderName + "/" + dto.getName()));
 			}
 		} else { // it is a folder
 			String subfolderName;

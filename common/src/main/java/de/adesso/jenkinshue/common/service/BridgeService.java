@@ -4,7 +4,6 @@ import java.util.List;
 
 import de.adesso.jenkinshue.common.dto.bridge.BridgeCreateDTO;
 import de.adesso.jenkinshue.common.dto.bridge.BridgeDTO;
-import de.adesso.jenkinshue.common.dto.bridge.BridgeUpdateDTO;
 import de.adesso.jenkinshue.common.hue.dto.FoundBridgeDTO;
 
 /**
@@ -30,8 +29,6 @@ public interface BridgeService {
 
 	BridgeDTO create(BridgeCreateDTO bridge);
 	
-	BridgeDTO update(BridgeUpdateDTO bridge);
-
 	BridgeDTO findByIp(String ip);
 	
 	void remove(long id);

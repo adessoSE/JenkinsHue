@@ -19,23 +19,17 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class LampUpdateDTO implements Serializable {
+public class LampUpdateDTO implements Serializable, GroupedScenarioConfigsLamp {
 	
 	private static final long serialVersionUID = -4851338323894376390L;
 	
 	private long id;
-
-	private String hueUniqueId;
-
-	private String name;
 
 	private Date workingStart;
 
 	private Date workingEnd;
 	
 	private List<JobDTO> jobs;
-	
-	private Scenario lastShownScenario;
 	
 	private List<ScenarioConfigDTO> buildingConfigs;
 	
@@ -45,6 +39,4 @@ public class LampUpdateDTO implements Serializable {
 	
 	private List<ScenarioConfigDTO> successConfigs;
 	
-	private long teamId;
-
 }

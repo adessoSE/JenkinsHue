@@ -30,12 +30,12 @@ public class TeamLampsDTO implements Serializable {
 	
 	private List<Scenario> scenarioPriority;
 	
-	private List<LampDTO> lamps;
+	private List<TeamLampsDTO_LampDTO> lamps;
 	
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class LampDTO implements Serializable, GroupedScenarioConfigsLamp {
+	public static class TeamLampsDTO_LampDTO implements Serializable, GroupedScenarioConfigsLamp {
 		
 		private static final long serialVersionUID = -7567638219788953738L;
 

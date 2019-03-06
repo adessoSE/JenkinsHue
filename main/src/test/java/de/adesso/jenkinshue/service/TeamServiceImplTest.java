@@ -1,7 +1,12 @@
 package de.adesso.jenkinshue.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import de.adesso.jenkinshue.common.dto.team.TeamRenameDTO;
+import de.adesso.jenkinshue.common.dto.team.TeamUpdateDTO;
+import de.adesso.jenkinshue.exception.EmptyInputException;
+import de.adesso.jenkinshue.exception.TeamDoesNotExistException;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -39,4 +44,35 @@ public class TeamServiceImplTest extends TestCase {
 		assertEquals("Team 2", teamRepository.findOne(teamDTO2.getId()).getName());
 	}
 
+	@Test(expected = EmptyInputException.class)
+	public void testCreateTeamWithoutName() {
+		try {
+			teamService.create(new TeamCreateDTO(null));
+		} catch (EmptyInputException eie) {
+			teamService.create(new TeamCreateDTO(""));
+		}
+		fail();
+	}
+
+	@Test(expected = TeamDoesNotExistException.class)
+	public void testUpdateTeamWithoutValidId() {
+		teamService.update(new TeamUpdateDTO(-1, null));
+		fail();
+	}
+
+	@Test(expected = TeamDoesNotExistException.class)
+	public void testRenameTeamWithoutValidId() {
+		teamService.rename(new TeamRenameDTO(-1, "Team 2"));
+		fail();
+	}
+
+	@Test(expected = EmptyInputException.class)
+	public void testRenameTeamWithEmptyInput() {
+		TeamLampsDTO team = teamService.create(new TeamCreateDTO("Team 1"));
+		try {
+			teamService.rename(new TeamRenameDTO(team.getId(), null));
+		} catch(EmptyInputException eie) {
+			teamService.rename(new TeamRenameDTO(team.getId(), ""));
+		}
+	}
 }

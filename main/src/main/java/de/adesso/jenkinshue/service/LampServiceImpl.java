@@ -1,10 +1,13 @@
 package de.adesso.jenkinshue.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
 
+import de.adesso.jenkinshue.entity.Job;
+import de.adesso.jenkinshue.exception.EmptyInputException;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -68,15 +71,6 @@ public class LampServiceImpl implements LampService {
 		this.mapper = mapper;
 	}
 	
-	private List<ScenarioConfig> map(List<ScenarioConfigDTO> scenarioConfigDTOs) {
-		List<ScenarioConfig> scenarioConfigs = new ArrayList<>();
-		for(ScenarioConfigDTO dto : scenarioConfigDTOs) {
-			ScenarioConfig scenarioConfig = mapper.map(dto, ScenarioConfig.class);
-			scenarioConfigs.add(scenarioConfig);
-		}
-		return scenarioConfigs;
-	}
-	
 	private void setGroupedScenarioConfigs(GroupedScenarioConfigsLamp lampDTO, List<ScenarioConfig> scenarioConfigs) {
 		lampDTO.setBuildingConfigs(new ArrayList<>());
 		lampDTO.setFailureConfigs(new ArrayList<>());
@@ -99,62 +93,74 @@ public class LampServiceImpl implements LampService {
 	
 	// TODO optimieren
 	@Override
-	public LampDTO create(LampCreateDTO lamp) throws LampAlreadyExistsException {
-		if(lampRepository.findByHueUniqueId(lamp.getHueUniqueId()) == null) {
-			Lamp l = mapper.map(lamp, Lamp.class);
-			Team team = teamRepository.findOne(lamp.getTeamId());
-			
-			l.setTeam(team);
-			
-			DateTime today = DateTime.now();
-			today = today.withMillisOfDay(0);
-			
-			l.setWorkingStart(today.withHourOfDay(7).toDate());
-			l.setWorkingEnd(today.withHourOfDay(19).toDate());
-			l.setScenarioConfigs(new ScenarioUtil().generateDefaultScenarioConfigs());
-			
-			l = lampRepository.save(l);
-			
-			l.getTeam().getScenarioPriority().size();
-			l.getScenarioConfigs().size();
-			
-			/**
-			 * andere Moeglichkeit
-			 * @see https://sourceforge.net/p/dozer/discussion/452530/thread/bbffc31b/
-			 */
-			// TODO
-			l.setScenarioConfigs(l.getScenarioConfigs());
-			
-			return mapper.map(l, LampDTO.class);
-		} else {
+	public LampDTO create(LampCreateDTO lamp) throws EmptyInputException, TeamDoesNotExistException, LampAlreadyExistsException {
+		if (lamp.getName() == null || lamp.getName().trim().isEmpty()
+				|| lamp.getHueUniqueId() == null || lamp.getHueUniqueId().trim().isEmpty()) {
+			throw new EmptyInputException();
+		}
+		Team team = teamRepository.findOne(lamp.getTeamId());
+		if (team == null) {
+			throw new TeamDoesNotExistException(lamp.getTeamId());
+		}
+		if (lampRepository.findByHueUniqueId(lamp.getHueUniqueId()) != null) {
 			throw new LampAlreadyExistsException(lamp.getHueUniqueId());
 		}
+
+		Lamp l = mapper.map(lamp, Lamp.class);
+
+		l.setTeam(team);
+		l.setWorkingStart(defaultWorkingStart());
+		l.setWorkingEnd(defaultWorkingEnd());
+		l.setScenarioConfigs(new ScenarioUtil().generateDefaultScenarioConfigs());
+
+		l = lampRepository.save(l);
+
+		l.getTeam().getScenarioPriority().size();
+		l.getScenarioConfigs().size();
+
+		/**
+		 * andere Moeglichkeit
+		 * @see https://sourceforge.net/p/dozer/discussion/452530/thread/bbffc31b/
+		 */
+		// TODO
+		l.setScenarioConfigs(l.getScenarioConfigs());
+
+		return mapper.map(l, LampDTO.class);
 	}
 
 	@Override
 	public LampDTO update(LampUpdateDTO lamp) throws InvalidWorkingPeriodException, LampDoesNotExistsException {
+		if (lamp.getWorkingStart() == null) {
+			lamp.setWorkingStart(defaultWorkingStart());
+		}
+		if (lamp.getWorkingEnd() == null) {
+			lamp.setWorkingEnd(defaultWorkingEnd());
+		}
 		DateTime start = new DateTime(lamp.getWorkingStart());
 		DateTime end = new DateTime(lamp.getWorkingEnd());
-		if(!holidayService.isValidWorkingPeriod(start, end)) {
+		if (!holidayService.isValidWorkingPeriod(start, end)) {
 			throw new InvalidWorkingPeriodException(start, end);
 		}
-		
-		Lamp l = mapper.map(lamp, Lamp.class);
-		if(l != null) {
-			l.setTeam(teamRepository.findOne(lamp.getTeamId()));
-			
-			l.setScenarioConfigs(new ArrayList<>());
-			l.getScenarioConfigs().addAll(map(lamp.getBuildingConfigs()));
-			l.getScenarioConfigs().addAll(map(lamp.getFailureConfigs()));
-			l.getScenarioConfigs().addAll(map(lamp.getUnstableConfigs()));
-			l.getScenarioConfigs().addAll(map(lamp.getSuccessConfigs()));
-			
-			l = lampRepository.save(l);
-			
-			return mapper.map(l, LampDTO.class);
-		} else {
+
+		Lamp lampInDB = lampRepository.findOne(lamp.getId());
+		if (lampInDB == null) {
 			throw new LampDoesNotExistsException(lamp.getId());
 		}
+
+		Lamp lampUpdate = new Lamp(lampInDB.getId(), lampInDB.getHueUniqueId(), lampInDB.getName(), lamp.getWorkingStart(),
+				lamp.getWorkingEnd(), null, lampInDB.getLastShownScenario(), null, lampInDB.getTeam());
+
+		lampUpdate.setJobs(mapper.mapList(lamp.getJobs(), Job.class));
+
+		lampUpdate.setScenarioConfigs(new ArrayList<>());
+		lampUpdate.getScenarioConfigs().addAll(mapper.mapList(lamp.getBuildingConfigs(), ScenarioConfig.class));
+		lampUpdate.getScenarioConfigs().addAll(mapper.mapList(lamp.getFailureConfigs(), ScenarioConfig.class));
+		lampUpdate.getScenarioConfigs().addAll(mapper.mapList(lamp.getUnstableConfigs(), ScenarioConfig.class));
+		lampUpdate.getScenarioConfigs().addAll(mapper.mapList(lamp.getSuccessConfigs(), ScenarioConfig.class));
+
+		lampUpdate = lampRepository.save(lampUpdate);
+
+		return mapper.map(lampUpdate, LampDTO.class);
 	}
 	
 	@Override
@@ -171,13 +177,14 @@ public class LampServiceImpl implements LampService {
 	}
 	
 	@Override
-	public LampDTO rename(LampRenameDTO lamp) throws LampDoesNotExistsException {
+	public LampDTO rename(LampRenameDTO lamp) throws EmptyInputException, LampDoesNotExistsException {
+		if (lamp.getName() == null || lamp.getName().trim().isEmpty()) {
+			throw new EmptyInputException();
+		}
 		Lamp l = lampRepository.findOne(lamp.getId());
 		if(l != null) {
-			if(lamp.getName() != null && !lamp.getName().isEmpty()) {
-				l.setName(lamp.getName());
-				lampRepository.save(l);
-			}
+			l.setName(lamp.getName());
+			l = lampRepository.save(l);
 			return mapper.map(l, LampDTO.class);
 		} else {
 			throw new LampDoesNotExistsException(lamp.getId());
@@ -244,7 +251,7 @@ public class LampServiceImpl implements LampService {
 		if(team != null) {
 			TeamLampsDTO dto = mapper.map(team, TeamLampsDTO.class);
 			for(int i = 0; i < team.getLamps().size(); i++) {
-				TeamLampsDTO.LampDTO lampDTO = dto.getLamps().get(i);
+				TeamLampsDTO.TeamLampsDTO_LampDTO lampDTO = dto.getLamps().get(i);
 				setGroupedScenarioConfigs(lampDTO, team.getLamps().get(i).getScenarioConfigs());
 			}
 			return dto;
@@ -258,7 +265,7 @@ public class LampServiceImpl implements LampService {
 		TeamLampsDTO teamLampsDTO = findAllOfATeam(teamId);
 		List<LampNameDTO> lamps = new ArrayList<>();
 		if(teamLampsDTO.getLamps() != null) {
-			for(TeamLampsDTO.LampDTO l : teamLampsDTO.getLamps()) {
+			for(TeamLampsDTO.TeamLampsDTO_LampDTO l : teamLampsDTO.getLamps()) {
 				lamps.add(new LampNameDTO(l.getId(), l.getHueUniqueId(), l.getName()));
 			}
 		}
@@ -280,4 +287,13 @@ public class LampServiceImpl implements LampService {
 		hueService.turnOff(lamp);
 	}
 
+	private Date defaultWorkingStart() {
+		DateTime today = DateTime.now().withMillisOfDay(0);
+		return today.withHourOfDay(7).toDate();
+	}
+
+	private Date defaultWorkingEnd() {
+		DateTime today = DateTime.now().withMillisOfDay(0);
+		return today.withHourOfDay(19).toDate();
+	}
 }

@@ -3,7 +3,11 @@ package de.adesso.jenkinshue.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import de.adesso.jenkinshue.exception.BridgeAlreadyExistsException;
+import de.adesso.jenkinshue.exception.InvalidIpException;
+import de.adesso.jenkinshue.exception.UserDoesNotExistException;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,21 +36,34 @@ public class BridgeServiceImplTest extends TestCase {
 	
 	@Autowired
 	private BridgeServiceImpl bridgeService;
-	
-	@Test(expected = Exception.class)
-	public void testCreate() {
+
+	@Test(expected = InvalidIpException.class)
+	public void testCreateWithInvalidIp() {
+		bridgeService.create(new BridgeCreateDTO("invalid", -1));
+		fail();
+	}
+
+	@Test(expected = BridgeAlreadyExistsException.class)
+	public void testCreateWithDuplicateIp() {
+		String ip = "127.0.0.1";
 		assertEquals(0, bridgeService.count());
 		
 		TeamLampsDTO team = teamService.create(new TeamCreateDTO("Team " + DateTime.now().toString("HH:mm:ss")));
 		UserDTO user = userService.create(new UserCreateDTO("email", team.getId()));
-		bridgeService.create(new BridgeCreateDTO("ip:port", user.getId()));
+		bridgeService.create(new BridgeCreateDTO(ip, user.getId()));
 		
 		assertEquals(1, bridgeService.count());
 		
-		// gleiche IP
-		bridgeService.create(new BridgeCreateDTO("ip:port", user.getId()));
+		// same ip
+		bridgeService.create(new BridgeCreateDTO(ip, user.getId()));
 	}
-	
+
+	@Test(expected = UserDoesNotExistException.class)
+	public void testCreateWithoutValidUserId() {
+		bridgeService.create(new BridgeCreateDTO("127.0.0.1", -1));
+		fail();
+	}
+
 	@Test
 	public void testIsIPv4Address() {
 		assertTrue(bridgeService.isIPv4Address("0.0.0.0"));

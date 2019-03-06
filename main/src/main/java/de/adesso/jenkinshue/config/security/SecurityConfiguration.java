@@ -66,6 +66,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.authenticationEntryPoint(new RestAuthenticationEntryPoint("/")).and()
 
 		/* old: "/bootstrap/**", "/libraries/**", "/scripts/**", "/styles/**" */
+		// TODO update for new ui
 		.authorizeRequests().antMatchers("/", "/login", "/wro/**", "/images/**", "/views/**").permitAll().and()
 
 		.authorizeRequests().anyRequest().authenticated().and()

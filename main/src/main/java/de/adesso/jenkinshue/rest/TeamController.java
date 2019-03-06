@@ -87,7 +87,7 @@ public class TeamController implements TeamService {
 	@Override
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public TeamLampsDTO create(@RequestBody @Valid TeamCreateDTO team) throws TeamAlreadyExistsException {
+	public TeamLampsDTO create(@RequestBody @Valid TeamCreateDTO team) throws EmptyInputException, TeamAlreadyExistsException {
 		return teamService.create(team);
 	}
 

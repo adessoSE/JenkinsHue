@@ -76,32 +76,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
-			<plugin>
-				<groupId>ro.isdc.wro4j</groupId>
-				<artifactId>wro4j-maven-plugin</artifactId>
-				<version>1.8.0</version>
-				<executions>
-					<execution>
-						<phase>compile</phase>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<targetGroups>all</targetGroups>
-					<minimize>true</minimize>
-					<ignoreMissingResources>false</ignoreMissingResources>
-					<contextFolder>${basedir}/src/main/resources/static/</contextFolder>
-					<wroFile>${basedir}/src/main/resources/WEB-INF/wro.xml</wroFile>
-					<extraConfigFile>${basedir}/src/main/resources/WEB-INF/wro.properties</extraConfigFile>
-					<destinationFolder>${basedir}/src/main/resources/static/wro/</destinationFolder>
-					<cssDestinationFolder>${basedir}/src/main/resources/static/wro/css/</cssDestinationFolder>
-      				<jsDestinationFolder>${basedir}/src/main/resources/static/wro/js/</jsDestinationFolder>
-					<wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
-				</configuration>
-			</plugin>
 		</plugins>
 	</build>
 

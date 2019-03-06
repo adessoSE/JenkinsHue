@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import de.adesso.jenkinshue.exception.UserDoesNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.adesso.jenkinshue.common.dto.bridge.BridgeCreateDTO;
 import de.adesso.jenkinshue.common.dto.bridge.BridgeDTO;
-import de.adesso.jenkinshue.common.dto.bridge.BridgeUpdateDTO;
 import de.adesso.jenkinshue.common.hue.dto.FoundBridgeDTO;
 import de.adesso.jenkinshue.common.service.BridgeService;
 import de.adesso.jenkinshue.exception.BridgeAlreadyExistsException;
@@ -89,14 +89,9 @@ public class BridgeController implements BridgeService {
 
 	@Override
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public BridgeDTO create(@RequestBody @Valid BridgeCreateDTO bridge) throws InvalidIpException, BridgeAlreadyExistsException {
+	public BridgeDTO create(@RequestBody @Valid BridgeCreateDTO bridge) throws InvalidIpException,
+			BridgeAlreadyExistsException, UserDoesNotExistException {
 		return bridgeService.create(bridge);
-	}
-
-	@Override
-	@RequestMapping(value = "/update", method = RequestMethod.POST)
-	public BridgeDTO update(@RequestBody @Valid BridgeUpdateDTO bridge) {
-		return bridgeService.update(bridge);
 	}
 
 	@Override
