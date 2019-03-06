@@ -6,7 +6,7 @@ The application shows the state of multiple jenkins builds using Philips hue lam
 
 ![screenshot1](https://github.com/adessoAG/JenkinsHue/blob/master/doc/screenshot1.png)
 
-## Version 2.x.x
+## Version 2.x.x ([Code](https://github.com/fi3te/jenkins-hue-ui))
 
 ![screenshot2](https://github.com/adessoAG/JenkinsHue/blob/master/doc/screenshot2.png)
 
