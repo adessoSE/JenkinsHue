@@ -23,20 +23,18 @@ import de.adesso.jenkinshue.repository.BridgeRepository;
 import de.adesso.jenkinshue.repository.UserRepository;
 
 /**
- * 
  * @author wennier
- *
  */
 @Primary
 @Service
 public class BridgeServiceImpl implements BridgeService {
 
 	private final UserRepository userRepository;
-	
+
 	private final BridgeRepository bridgeRepository;
-	
+
 	private final HueService hueService;
-	
+
 	private final Mapper mapper;
 
 	@Autowired
@@ -46,10 +44,10 @@ public class BridgeServiceImpl implements BridgeService {
 		this.hueService = hueService;
 		this.mapper = mapper;
 	}
-	
+
 	private List<BridgeDTO> map(List<Bridge> bridges) {
 		List<BridgeDTO> dtos = new ArrayList<>();
-		for(Bridge bridge : bridges) {
+		for (Bridge bridge : bridges) {
 			BridgeDTO dto = mapper.map(bridge, BridgeDTO.class);
 			dtos.add(dto);
 		}
@@ -66,13 +64,13 @@ public class BridgeServiceImpl implements BridgeService {
 	public List<BridgeDTO> findAll(int page, int size) {
 		return map(bridgeRepository.findAll(new PageRequest(page, size)).getContent());
 	}
-	
+
 	@Override
 	public List<FoundBridgeDTO> findAvailable() {
 		List<FoundBridgeDTO> allBridges = hueService.findAllBridges();
-		for(int i = allBridges.size() - 1; i >= 0; i--) {
+		for (int i = allBridges.size() - 1; i >= 0; i--) {
 			String ip = allBridges.get(i).getInternalipaddress();
-			if(bridgeRepository.findByIp(ip) != null) {
+			if (bridgeRepository.findByIp(ip) != null) {
 				allBridges.remove(i);
 			}
 		}
@@ -101,10 +99,10 @@ public class BridgeServiceImpl implements BridgeService {
 
 	@Override
 	public BridgeDTO create(BridgeCreateDTO bridge) throws InvalidIpException, BridgeAlreadyExistsException,
-			UserDoesNotExistException {
+		UserDoesNotExistException {
 		if (!isIPv4Address(bridge.getIp())) {
 			throw new InvalidIpException(bridge.getIp());
-		} else if(bridgeRepository.findByIp(bridge.getIp()) != null) {
+		} else if (bridgeRepository.findByIp(bridge.getIp()) != null) {
 			throw new BridgeAlreadyExistsException(bridge.getIp());
 		}
 		User user = userRepository.findOne(bridge.getUserId());
@@ -115,14 +113,14 @@ public class BridgeServiceImpl implements BridgeService {
 		Bridge b = new Bridge();
 		b.setIp(bridge.getIp());
 		b.setUser(user);
-		
+
 		b = bridgeRepository.save(b);
-		
+
 		BridgeDTO dto = mapper.map(b, BridgeDTO.class);
-		
+
 		hueService.connectToBridgeIfNotAlreadyConnected(dto);
 //		hueService.updateBridgeState(Arrays.asList(dto)); nicht noetig, da die Bridge nach einer Verzögerung erneut abgefragt werden
-		
+
 		return dto;
 	}
 
@@ -134,14 +132,14 @@ public class BridgeServiceImpl implements BridgeService {
 	@Override
 	public void remove(long id) {
 		Bridge b = bridgeRepository.findOne(id);
-		if(b != null) {
+		if (b != null) {
 			hueService.disconnectFromBridge(mapper.map(b, BridgeDTO.class));
 			bridgeRepository.delete(id);
 		}
 	}
-	
+
 	boolean isIPv4Address(String ip) {
-		if(ip == null) {
+		if (ip == null) {
 			return false;
 		} else {
 			String regex255 = "(([0-9])|([1-9][0-9])|(1[0-9][0-9])|(2[0-4][0-9])|(25[0-5]))";

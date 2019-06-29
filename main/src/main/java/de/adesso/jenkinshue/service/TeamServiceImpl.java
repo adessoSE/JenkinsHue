@@ -27,6 +27,8 @@ import de.adesso.jenkinshue.repository.TeamRepository;
 import de.adesso.jenkinshue.repository.UserRepository;
 import de.adesso.jenkinshue.util.ScenarioUtil;
 
+import static de.adesso.jenkinshue.util.ListUtil.nullSafe;
+
 /**
  * 
  * @author wennier
@@ -172,7 +174,7 @@ public class TeamServiceImpl implements TeamService {
 		List<User> users = userRepository.findAllOfTeam(id);
 		for(User user : users) {
 			List<Bridge> bridges = user.getBridges();
-			for(Bridge bridge : bridges) {
+			for(Bridge bridge : nullSafe(bridges)) {
 				bridge.setUser(null);
 				bridgeRepository.save(bridge);
 			}

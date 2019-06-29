@@ -20,7 +20,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-		<lombok.version>1.16.16</lombok.version>
+		<lombok.version>1.18.8</lombok.version>
         <postgresql.version>42.2.2</postgresql.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -133,7 +133,7 @@
 			<plugin>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok-maven-plugin</artifactId>
-				<version>1.16.16.0</version>
+				<version>1.18.6.0</version>
 				<executions>
 					<execution>
 						<phase>generate-sources</phase>

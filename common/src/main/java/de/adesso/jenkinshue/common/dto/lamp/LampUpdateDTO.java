@@ -6,7 +6,6 @@ import java.util.List;
 
 import de.adesso.jenkinshue.common.dto.job.JobDTO;
 import de.adesso.jenkinshue.common.dto.scenario_config.ScenarioConfigDTO;
-import de.adesso.jenkinshue.common.enumeration.Scenario;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

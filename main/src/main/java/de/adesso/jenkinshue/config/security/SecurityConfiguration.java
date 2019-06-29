@@ -2,7 +2,6 @@ package de.adesso.jenkinshue.config.security;
 
 import de.adesso.jenkinshue.common.dto.user.UserDTO;
 import de.adesso.jenkinshue.common.enumeration.Role;
-import de.adesso.jenkinshue.common.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +10,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -39,9 +37,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- *
  * @author wennier
- *
  */
 @Configuration
 @EnableWebSecurity
@@ -62,22 +58,22 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http// .csrf().disable()
 
-		.headers().cacheControl().disable().and().exceptionHandling()
-				.authenticationEntryPoint(new RestAuthenticationEntryPoint("/")).and()
+			.headers().cacheControl().disable().and().exceptionHandling()
+			.authenticationEntryPoint(new RestAuthenticationEntryPoint("/")).and()
 
-		/* old: "/bootstrap/**", "/libraries/**", "/scripts/**", "/styles/**" */
-		// TODO update for new ui
-		.authorizeRequests().antMatchers("/", "/login", "/wro/**", "/images/**", "/views/**").permitAll().and()
+			/* old: "/bootstrap/**", "/libraries/**", "/scripts/**", "/styles/**" */
+			// TODO update for new ui
+			.authorizeRequests().antMatchers("/", "/login", "/wro/**", "/images/**", "/views/**").permitAll().and()
 
-		.authorizeRequests().anyRequest().authenticated().and()
+			.authorizeRequests().anyRequest().authenticated().and()
 
-		.formLogin().loginProcessingUrl("/login").successHandler(authenticationSuccessHandler())
-				.failureHandler(authenticationFailureHandler()).and()
+			.formLogin().loginProcessingUrl("/login").successHandler(authenticationSuccessHandler())
+			.failureHandler(authenticationFailureHandler()).and()
 
-		.logout().logoutUrl("/logout").logoutSuccessHandler(logoutSuccessHandler())
-				.deleteCookies("JSESSIONID", "XSRF-TOKEN").invalidateHttpSession(true).and()
+			.logout().logoutUrl("/logout").logoutSuccessHandler(logoutSuccessHandler())
+			.deleteCookies("JSESSIONID", "XSRF-TOKEN").invalidateHttpSession(true).and()
 
-		.csrf().csrfTokenRepository(csrfTokenRepository()).and().addFilterAfter(csrfHeaderFilter(), CsrfFilter.class);
+			.csrf().csrfTokenRepository(csrfTokenRepository()).and().addFilterAfter(csrfHeaderFilter(), CsrfFilter.class);
 	}
 
 	private CsrfTokenRepository csrfTokenRepository() {
@@ -90,7 +86,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return new OncePerRequestFilter() {
 			@Override
 			protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-					FilterChain filterChain) throws ServletException, IOException {
+											FilterChain filterChain) throws ServletException, IOException {
 				CsrfToken csrf = (CsrfToken) request.getAttribute(CsrfToken.class.getName());
 				if (csrf != null) {
 					Cookie cookie = WebUtils.getCookie(request, "XSRF-TOKEN");
@@ -109,7 +105,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		//noinspection ConstantConditions
-		if(ldapAuthentication != null) {
+		if (ldapAuthentication != null) {
 			auth.authenticationProvider(userAuthenticationProvider);
 			ldapAuthentication.enable(auth);
 		} else {
@@ -120,21 +116,21 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Bean
 	public UserDetailsService userDetailsService() {
 		return userName -> {
-            UserDTO user = userAuthenticationProvider.userService.findByLogin(userName.toLowerCase());
-            if (user == null) {
-                throw new UsernameNotFoundException(userName);
-            }
+			UserDTO user = userAuthenticationProvider.userService.findByLogin(userName.toLowerCase());
+			if (user == null) {
+				throw new UsernameNotFoundException(userName);
+			}
 
-            Set<SimpleGrantedAuthority> userAuthorities = new HashSet<>();
-            List<Role> roles = user.getRoles();
-            if (roles != null) {
-                for (Role role : roles) {
-                    userAuthorities.add(new SimpleGrantedAuthority(role.toString()));
-                }
-            }
+			Set<SimpleGrantedAuthority> userAuthorities = new HashSet<>();
+			List<Role> roles = user.getRoles();
+			if (roles != null) {
+				for (Role role : roles) {
+					userAuthorities.add(new SimpleGrantedAuthority(role.toString()));
+				}
+			}
 
-            return new User(userName, userName /* TODO use password */, userAuthorities);
-        };
+			return new User(userName, userName /* TODO use password */, userAuthorities);
+		};
 	}
 
 	@Bean
@@ -160,7 +156,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 		@Override
 		public void commence(HttpServletRequest request, HttpServletResponse response,
-				AuthenticationException authException) throws IOException, ServletException {
+							 AuthenticationException authException) throws IOException, ServletException {
 			if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
 				response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
 			} else {

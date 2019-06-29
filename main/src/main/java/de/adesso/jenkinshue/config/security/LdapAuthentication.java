@@ -58,14 +58,6 @@ public class LdapAuthentication {
 
 	class LdapGroupAuthorityMapper implements UserDetailsContextMapper {
 
-		private List<String> checkAuthorities = new ArrayList<String>();
-
-		public LdapGroupAuthorityMapper(String... checkAuthorities) {
-			for (String checkAuthority : checkAuthorities) {
-				this.checkAuthorities.add(checkAuthority.toLowerCase());
-			}
-		}
-
 		@Override
 		public UserDetails mapUserFromContext(DirContextOperations ctx, String username,
 											  Collection<? extends GrantedAuthority> authorities) {

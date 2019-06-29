@@ -9,7 +9,6 @@ import de.adesso.jenkinshue.entity.Team;
 import de.adesso.jenkinshue.exception.EmptyInputException;
 import de.adesso.jenkinshue.exception.TeamDoesNotExistException;
 import de.adesso.jenkinshue.exception.UserDoesNotExistException;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +27,8 @@ import de.adesso.jenkinshue.repository.BridgeRepository;
 import de.adesso.jenkinshue.repository.TeamRepository;
 import de.adesso.jenkinshue.repository.UserRepository;
 import de.adesso.jenkinshue.util.LDAPManager;
+
+import static de.adesso.jenkinshue.util.ListUtil.nullSafe;
 
 /**
  *
@@ -151,7 +152,7 @@ public class UserServiceImpl implements UserService {
 		User user = userRepository.findOne(id);
 		if (user != null) {
 			List<Bridge> bridges = user.getBridges();
-			for (Bridge bridge : bridges) {
+			for (Bridge bridge : nullSafe(bridges)) {
 				bridge.setUser(null);
 				bridgeRepository.save(bridge);
 			}
