@@ -12,14 +12,15 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.validator.constraints.NotBlank;
 
 import de.adesso.jenkinshue.common.enumeration.Scenario;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * 
@@ -49,7 +50,8 @@ public class Team implements Serializable {
 	
 	@OneToMany(mappedBy = "team", cascade = CascadeType.REMOVE, orphanRemoval = true)
 	private List<Lamp> lamps;
-	
+
+	@ToString.Exclude
 	@OneToMany(mappedBy = "team")
 	private List<User> users;
 

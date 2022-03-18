@@ -15,7 +15,7 @@ import de.adesso.jenkinshue.common.dto.bridge.BridgeDTO;
 import de.adesso.jenkinshue.common.hue.dto.FoundBridgeDTO;
 import de.adesso.jenkinshue.common.service.BridgeService;
 import de.adesso.jenkinshue.common.service.HueService;
-import de.adesso.jenkinshue.dozer.Mapper;
+import de.adesso.jenkinshue.mapper.EntityMapper;
 import de.adesso.jenkinshue.entity.Bridge;
 import de.adesso.jenkinshue.exception.BridgeAlreadyExistsException;
 import de.adesso.jenkinshue.exception.InvalidIpException;
@@ -35,10 +35,10 @@ public class BridgeServiceImpl implements BridgeService {
 
 	private final HueService hueService;
 
-	private final Mapper mapper;
+	private final EntityMapper mapper;
 
 	@Autowired
-	public BridgeServiceImpl(UserRepository userRepository, BridgeRepository bridgeRepository, HueService hueService, Mapper mapper) {
+	public BridgeServiceImpl(UserRepository userRepository, BridgeRepository bridgeRepository, HueService hueService, EntityMapper mapper) {
 		this.userRepository = userRepository;
 		this.bridgeRepository = bridgeRepository;
 		this.hueService = hueService;
@@ -62,7 +62,7 @@ public class BridgeServiceImpl implements BridgeService {
 
 	@Override
 	public List<BridgeDTO> findAll(int page, int size) {
-		return map(bridgeRepository.findAll(new PageRequest(page, size)).getContent());
+		return map(bridgeRepository.findAll(PageRequest.of(page, size)).getContent());
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class BridgeServiceImpl implements BridgeService {
 
 	@Override
 	public List<BridgeDTO> findBySearchItem(String searchItem, int page, int size) {
-		return map(bridgeRepository.findBySearchItem(searchItem.toLowerCase(), new PageRequest(page, size)));
+		return map(bridgeRepository.findBySearchItem(searchItem.toLowerCase(), PageRequest.of(page, size)));
 	}
 
 	@Override
@@ -99,16 +99,14 @@ public class BridgeServiceImpl implements BridgeService {
 
 	@Override
 	public BridgeDTO create(BridgeCreateDTO bridge) throws InvalidIpException, BridgeAlreadyExistsException,
-		UserDoesNotExistException {
+			UserDoesNotExistException {
 		if (!isIPv4Address(bridge.getIp())) {
 			throw new InvalidIpException(bridge.getIp());
 		} else if (bridgeRepository.findByIp(bridge.getIp()) != null) {
 			throw new BridgeAlreadyExistsException(bridge.getIp());
 		}
-		User user = userRepository.findOne(bridge.getUserId());
-		if (user == null) {
-			throw new UserDoesNotExistException(bridge.getUserId());
-		}
+		User user = userRepository.findById(bridge.getUserId())
+				.orElseThrow(() -> new UserDoesNotExistException(bridge.getUserId()));
 
 		Bridge b = new Bridge();
 		b.setIp(bridge.getIp());
@@ -131,11 +129,12 @@ public class BridgeServiceImpl implements BridgeService {
 
 	@Override
 	public void remove(long id) {
-		Bridge b = bridgeRepository.findOne(id);
-		if (b != null) {
-			hueService.disconnectFromBridge(mapper.map(b, BridgeDTO.class));
-			bridgeRepository.delete(id);
-		}
+		bridgeRepository.findById(id).ifPresent(bridge -> {
+
+			hueService.disconnectFromBridge(mapper.map(bridge, BridgeDTO.class));
+			bridgeRepository.deleteById(id);
+		});
+
 	}
 
 	boolean isIPv4Address(String ip) {

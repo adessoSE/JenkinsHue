@@ -18,7 +18,7 @@ import de.adesso.jenkinshue.common.dto.user.UserCreateDTO;
 import de.adesso.jenkinshue.common.dto.user.UserDTO;
 import de.adesso.jenkinshue.common.dto.user.UserUpdateDTO;
 import de.adesso.jenkinshue.common.service.UserService;
-import de.adesso.jenkinshue.dozer.Mapper;
+import de.adesso.jenkinshue.mapper.EntityMapper;
 import de.adesso.jenkinshue.entity.Bridge;
 import de.adesso.jenkinshue.entity.User;
 import de.adesso.jenkinshue.exception.InvalidLoginException;
@@ -49,10 +49,10 @@ public class UserServiceImpl implements UserService {
 	@Autowired(required = false)
 	private LDAPManager ldapManager;
 
-	private final Mapper mapper;
+	private final EntityMapper mapper;
 
 	@Autowired
-	public UserServiceImpl(TeamRepository teamRepository, UserRepository userRepository, BridgeRepository bridgeRepository, Mapper mapper) {
+	public UserServiceImpl(TeamRepository teamRepository, UserRepository userRepository, BridgeRepository bridgeRepository, EntityMapper mapper) {
 		this.teamRepository = teamRepository;
 		this.userRepository = userRepository;
 		this.bridgeRepository = bridgeRepository;
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<UserDTO> findAll(int page, int size) {
-		return map(userRepository.findAll(new PageRequest(page, size)).getContent());
+		return map(userRepository.findAll(PageRequest.of(page, size)).getContent());
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<UserDTO> findBySearchItem(String searchItem, int page, int size) {
-		return map(userRepository.findBySearchItem(searchItem.toLowerCase(), new PageRequest(page, size)));
+		return map(userRepository.findBySearchItem(searchItem.toLowerCase(), PageRequest.of(page, size)));
 	}
 
 	@Override
@@ -110,10 +110,9 @@ public class UserServiceImpl implements UserService {
 			throw new EmptyInputException();
 		}
 		user.setLogin(user.getLogin().trim().toLowerCase());
-		Team team = teamRepository.findOne(user.getTeamId());
-		if (team == null) {
-			throw new TeamDoesNotExistException(user.getTeamId());
-		}
+		Team team = teamRepository.findById(user.getTeamId())
+				.orElseThrow(() -> new TeamDoesNotExistException(user.getTeamId()));
+
 		if (userRepository.findByLogin(user.getLogin()) != null) {
 			throw new UserAlreadyExistsException(user.getLogin());
 		}
@@ -138,10 +137,9 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserDTO update(UserUpdateDTO user) throws UserDoesNotExistException {
-		User userInDB = userRepository.findOne(user.getId());
-		if (userInDB == null) {
-			throw new UserDoesNotExistException(user.getId());
-		}
+		User userInDB = userRepository.findById(user.getId())
+				.orElseThrow(() -> new UserDoesNotExistException(user.getId()));
+
 		userInDB.setRoles(user.getRoles());
 		userInDB = userRepository.save(userInDB);
 		return mapper.map(userInDB, UserDTO.class);
@@ -149,15 +147,16 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public void remove(long id) {
-		User user = userRepository.findOne(id);
-		if (user != null) {
+		userRepository.findById(id).ifPresent(user -> {
+
 			List<Bridge> bridges = user.getBridges();
 			for (Bridge bridge : nullSafe(bridges)) {
 				bridge.setUser(null);
 				bridgeRepository.save(bridge);
 			}
-			userRepository.delete(id);
-		}
+			userRepository.deleteById(id);
+		});
+
 	}
 
 	@Override

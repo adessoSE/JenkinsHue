@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 
 import de.adesso.jenkinshue.common.dto.team.TeamRenameDTO;
 import de.adesso.jenkinshue.common.dto.team.TeamUpdateDTO;
+import de.adesso.jenkinshue.entity.Team;
 import de.adesso.jenkinshue.exception.EmptyInputException;
 import de.adesso.jenkinshue.exception.TeamDoesNotExistException;
 import org.junit.Test;
@@ -15,6 +16,8 @@ import de.adesso.jenkinshue.common.dto.team.TeamCreateDTO;
 import de.adesso.jenkinshue.common.dto.team.TeamLampsDTO;
 import de.adesso.jenkinshue.common.service.TeamService;
 import de.adesso.jenkinshue.repository.TeamRepository;
+
+import java.util.NoSuchElementException;
 
 /**
  * 
@@ -36,12 +39,12 @@ public class TeamServiceImplTest extends TestCase {
 		TeamCreateDTO teamCreateDTO1 = new TeamCreateDTO("Team 1");
 		TeamLampsDTO teamDTO1 = teamService.create(teamCreateDTO1);
 		assertEquals(1, teamService.count());
-		assertEquals("Team 1", teamRepository.findOne(teamDTO1.getId()).getName());
+		assertEquals("Team 1", teamRepository.findById(teamDTO1.getId()).map(Team::getName).orElseThrow(NoSuchElementException::new));
 		
 		TeamCreateDTO teamCreateDTO2 = new TeamCreateDTO("Team 2");
 		TeamLampsDTO teamDTO2 = teamService.create(teamCreateDTO2);
 		assertEquals(2, teamService.count());
-		assertEquals("Team 2", teamRepository.findOne(teamDTO2.getId()).getName());
+		assertEquals("Team 2", teamRepository.findById(teamDTO2.getId()).map(Team::getName).orElseThrow(NoSuchElementException::new));
 	}
 
 	@Test(expected = EmptyInputException.class)

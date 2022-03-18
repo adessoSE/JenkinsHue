@@ -15,7 +15,7 @@ import de.adesso.jenkinshue.common.dto.team.TeamUpdateDTO;
 import de.adesso.jenkinshue.common.dto.team.TeamUsersDTO;
 import de.adesso.jenkinshue.common.enumeration.Scenario;
 import de.adesso.jenkinshue.common.service.TeamService;
-import de.adesso.jenkinshue.dozer.Mapper;
+import de.adesso.jenkinshue.mapper.EntityMapper;
 import de.adesso.jenkinshue.entity.Bridge;
 import de.adesso.jenkinshue.entity.Team;
 import de.adesso.jenkinshue.entity.User;
@@ -30,24 +30,22 @@ import de.adesso.jenkinshue.util.ScenarioUtil;
 import static de.adesso.jenkinshue.util.ListUtil.nullSafe;
 
 /**
- * 
  * @author wennier
- *
  */
 @Primary
 @Service
 public class TeamServiceImpl implements TeamService {
 
 	private final TeamRepository teamRepository;
-	
+
 	private final UserRepository userRepository;
-	
+
 	private final BridgeRepository bridgeRepository;
-	
-	private final Mapper mapper;
+
+	private final EntityMapper mapper;
 
 	@Autowired
-	public TeamServiceImpl(TeamRepository teamRepository, UserRepository userRepository, BridgeRepository bridgeRepository, Mapper mapper) {
+	public TeamServiceImpl(TeamRepository teamRepository, UserRepository userRepository, BridgeRepository bridgeRepository, EntityMapper mapper) {
 		this.teamRepository = teamRepository;
 		this.userRepository = userRepository;
 		this.bridgeRepository = bridgeRepository;
@@ -56,7 +54,7 @@ public class TeamServiceImpl implements TeamService {
 
 	private List<TeamUsersDTO> map(List<Team> teams) {
 		List<TeamUsersDTO> dtos = new ArrayList<>();
-		for(Team team : teams) {
+		for (Team team : teams) {
 			TeamUsersDTO dto = mapper.map(team, TeamUsersDTO.class);
 			dtos.add(dto);
 		}
@@ -67,12 +65,12 @@ public class TeamServiceImpl implements TeamService {
 	public List<TeamUsersDTO> findAll() {
 		return map(teamRepository.findAll());
 	}
-	
+
 	@Override
 	public List<TeamUsersDTO> findAll(int page, int size) {
-		return map(teamRepository.findAll(new PageRequest(page, size)).getContent());
+		return map(teamRepository.findAll(PageRequest.of(page, size)).getContent());
 	}
-	
+
 	@Override
 	public long count() {
 		return teamRepository.count();
@@ -85,7 +83,7 @@ public class TeamServiceImpl implements TeamService {
 
 	@Override
 	public List<TeamUsersDTO> findBySearchItem(String searchItem, int page, int size) {
-		return map(teamRepository.findBySearchItem(searchItem.toLowerCase(), new PageRequest(page, size)));
+		return map(teamRepository.findBySearchItem(searchItem.toLowerCase(), PageRequest.of(page, size)));
 	}
 
 	@Override
@@ -99,88 +97,80 @@ public class TeamServiceImpl implements TeamService {
 			throw new EmptyInputException();
 		}
 		team.setName(team.getName().trim());
-		if(teamRepository.findByName(team.getName()) != null) {
+		if (teamRepository.findByName(team.getName()) != null) {
 			throw new TeamAlreadyExistsException(team.getName());
 		}
-		
+
 		Team t = new Team();
 		t.setName(team.getName());
 		t.setScenarioPriority(new ScenarioUtil().generateDefaultScenarioPriority());
 		t = teamRepository.save(t);
-		
+
 		t.getScenarioPriority().size();
 		TeamLampsDTO dto = new TeamLampsDTO();
 		dto.setId(t.getId());
 		dto.setName(t.getName());
 		dto.setScenarioPriority(t.getScenarioPriority());
-		
+
 		return dto;
 	}
-	
+
 	@Override
 	public TeamUsersDTO update(TeamUpdateDTO team) throws TeamDoesNotExistException {
-		Team teamInDB = teamRepository.findOne(team.getId());
-		if(teamInDB == null) {
-			throw new TeamDoesNotExistException(team.getId());
+		Team teamInDB = teamRepository.findById(team.getId()).orElseThrow(() -> new TeamDoesNotExistException(team.getId()));
+
+		if (team.getScenarioPriority() != null && team.getScenarioPriority().size() == Scenario.getPriorityListLength()) {
+			teamInDB.setScenarioPriority(team.getScenarioPriority());
+			teamInDB = teamRepository.save(teamInDB);
+			return mapper.map(teamInDB, TeamUsersDTO.class);
 		} else {
-			if(team.getScenarioPriority() != null && team.getScenarioPriority().size() == Scenario.getPriorityListLength()) {
-				teamInDB.setScenarioPriority(team.getScenarioPriority());
-				teamInDB = teamRepository.save(teamInDB);
-				return mapper.map(teamInDB, TeamUsersDTO.class);
-			} else {
-				throw new IllegalArgumentException("Die priorisierte Liste enthält nicht alle Szenarios!");
-			}
+			throw new IllegalArgumentException("Die priorisierte Liste enthält nicht alle Szenarios!");
 		}
+
 	}
-	
+
 	@Override
 	public TeamUsersDTO rename(TeamRenameDTO team) throws TeamDoesNotExistException, TeamAlreadyExistsException, EmptyInputException {
-		Team t = teamRepository.findOne(team.getId());
-		if(t != null) {
-			if(team.getName() == null || team.getName().trim().isEmpty()) { // Name ungueltig
-				throw new EmptyInputException();
-			} else if(t.getName().equals(team.getName())) { // Name hat sich nicht geaendert
-				return mapper.map(t, TeamUsersDTO.class);
-			}
-			
-			Team teamWithSameName = teamRepository.findByName(team.getName());
-			if(teamWithSameName == null) {
-				t.setName(team.getName());
-				teamRepository.save(t);
-				return mapper.map(t, TeamUsersDTO.class);
-			} else {
-				throw new TeamAlreadyExistsException(team.getName());
-			}
+		Team t = teamRepository.findById(team.getId()).orElseThrow(() -> new TeamDoesNotExistException(team.getId()));
+
+		if (team.getName() == null || team.getName().trim().isEmpty()) { // Name ungueltig
+			throw new EmptyInputException();
+		} else if (t.getName().equals(team.getName())) { // Name hat sich nicht geaendert
+			return mapper.map(t, TeamUsersDTO.class);
+		}
+
+		Team teamWithSameName = teamRepository.findByName(team.getName());
+		if (teamWithSameName == null) {
+			t.setName(team.getName());
+			teamRepository.save(t);
+			return mapper.map(t, TeamUsersDTO.class);
 		} else {
-			throw new TeamDoesNotExistException(team.getId());
+			throw new TeamAlreadyExistsException(team.getName());
 		}
 	}
-	
-	
+
+
 	// TODO warum funktioniert das hier ohne fetch?
-	
+
 	@Override
 	public TeamUsersDTO findOne(long id) throws TeamDoesNotExistException {
-		Team teamInDB = teamRepository.findOne(id);
-		if(teamInDB == null) {
-			throw new TeamDoesNotExistException(id);
-		} else {
-			return mapper.map(teamInDB, TeamUsersDTO.class);
-		}
+		return  teamRepository.findById(id)
+				.map(team -> mapper.map(team, TeamUsersDTO.class))
+				.orElseThrow(() -> new TeamDoesNotExistException(id));
 	}
 
 	@Override
 	public void remove(long id) {
 		List<User> users = userRepository.findAllOfTeam(id);
-		for(User user : users) {
+		for (User user : users) {
 			List<Bridge> bridges = user.getBridges();
-			for(Bridge bridge : nullSafe(bridges)) {
+			for (Bridge bridge : nullSafe(bridges)) {
 				bridge.setUser(null);
 				bridgeRepository.save(bridge);
 			}
-			userRepository.delete(user.getId());
+			userRepository.deleteById(user.getId());
 		}
-		teamRepository.delete(id);
+		teamRepository.deleteById(id);
 	}
 
 }
