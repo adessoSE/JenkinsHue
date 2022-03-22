@@ -244,12 +244,12 @@ public class LampServiceImpl implements LampService {
 		Team team = teamRepository.findById(teamId)
 				.orElseThrow(() -> new TeamDoesNotExistException(teamId));
 
-			TeamLampsDTO dto = mapper.map(team, TeamLampsDTO.class);
-			for (int i = 0; i < nullSafe(team.getLamps()).size(); i++) {
-				TeamLampsDTO.TeamLampsDTO_LampDTO lampDTO = dto.getLamps().get(i);
-				setGroupedScenarioConfigs(lampDTO, team.getLamps().get(i).getScenarioConfigs());
-			}
-			return dto;
+		TeamLampsDTO dto = mapper.map(team, TeamLampsDTO.class);
+		for (int i = 0; i < nullSafe(team.getLamps()).size(); i++) {
+			TeamLampsDTO.TeamLampsDTO_LampDTO lampDTO = dto.getLamps().get(i);
+			setGroupedScenarioConfigs(lampDTO, team.getLamps().get(i).getScenarioConfigs());
+		}
+		return dto;
 
 	}
 

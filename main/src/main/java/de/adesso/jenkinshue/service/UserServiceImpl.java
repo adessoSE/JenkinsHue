@@ -31,9 +31,7 @@ import de.adesso.jenkinshue.util.LDAPManager;
 import static de.adesso.jenkinshue.util.ListUtil.nullSafe;
 
 /**
- *
  * @author wennier
- *
  */
 @Primary
 @Service
@@ -149,12 +147,12 @@ public class UserServiceImpl implements UserService {
 	public void remove(long id) {
 		userRepository.findById(id).ifPresent(user -> {
 
-			List<Bridge> bridges = user.getBridges();
-			for (Bridge bridge : nullSafe(bridges)) {
-				bridge.setUser(null);
-				bridgeRepository.save(bridge);
-			}
-			userRepository.deleteById(id);
+		List<Bridge> bridges = user.getBridges();
+		for (Bridge bridge : nullSafe(bridges)) {
+			bridge.setUser(null);
+			bridgeRepository.save(bridge);
+		}
+		userRepository.deleteById(id);
 		});
 
 	}

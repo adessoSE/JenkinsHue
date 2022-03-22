@@ -1,83 +1,81 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<artifactId>main</artifactId>
-	<packaging>jar</packaging>
+    <artifactId>main</artifactId>
+    <packaging>jar</packaging>
 
-	<parent>
-		<groupId>de.adesso.jenkins-hue</groupId>
-		<artifactId>jenkins-hue-parent</artifactId>
-		<version>1.0.0</version>
-	</parent>
+    <parent>
+        <groupId>de.adesso.jenkins-hue</groupId>
+        <artifactId>jenkins-hue-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
 
-	<dependencies>
-		<dependency>
-			<groupId>de.adesso.jenkins-hue</groupId>
-			<artifactId>common</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-
-
+    <dependencies>
+        <dependency>
+            <groupId>de.adesso.jenkins-hue</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
 
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-		</dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
 
-		<dependency>
-			<groupId>com.philips</groupId>
-			<artifactId>huelocalsdk</artifactId>
-			<version>1.0</version>
-		</dependency>
+        <dependency>
+            <groupId>com.philips</groupId>
+            <artifactId>huelocalsdk</artifactId>
+            <version>1.0</version>
+        </dependency>
 
-		<dependency>
-			<groupId>com.philips</groupId>
-			<artifactId>huesdkresources</artifactId>
-			<version>1.0</version>
-		</dependency>
+        <dependency>
+            <groupId>com.philips</groupId>
+            <artifactId>huesdkresources</artifactId>
+            <version>1.0</version>
+        </dependency>
 
-		<dependency>
+        <dependency>
             <groupId>com.github.dozermapper</groupId>
             <artifactId>dozer-core</artifactId>
             <version>6.5.2</version>
-		</dependency>
+        </dependency>
 
-		<dependency>
-			<groupId>de.jollyday</groupId>
-			<artifactId>jollyday</artifactId>
-			<version>0.5.2</version>
-		</dependency>
+        <dependency>
+            <groupId>de.jollyday</groupId>
+            <artifactId>jollyday</artifactId>
+            <version>0.5.2</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.flywaydb</groupId>
-			<artifactId>flyway-core</artifactId>
-			<version>5.2.4</version>
-		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>5.2.4</version>
+        </dependency>
+    </dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>repackage</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
-	<repositories>
-		<repository>
-			<id>local-maven-repository</id>
-			<url>file:///${project.basedir}/local-maven-repository</url>
-		</repository>
-	</repositories>
+    <repositories>
+        <repository>
+            <id>local-maven-repository</id>
+            <url>file:///${project.basedir}/local-maven-repository</url>
+        </repository>
+    </repositories>
 
 </project>

@@ -9,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
@@ -17,7 +16,6 @@ import lombok.NoArgsConstructor;
  * @author wennier
  *
  */
-@Data
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -31,5 +29,25 @@ public class Job implements Serializable {
 	
 	@NotBlank
 	private String name;
-	
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 }
