@@ -11,13 +11,17 @@ import javax.validation.constraints.NotBlank;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * 
  * @author wennier
  *
  */
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -37,41 +41,5 @@ public class Bridge implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "USER_ID")
 	private User user;
-
-	public static long getSerialVersionUID() {
-		return serialVersionUID;
-	}
-
-	public long getId() {
-		return id;
-	}
-
-	public void setId(long id) {
-		this.id = id;
-	}
-
-	public String getIp() {
-		return ip;
-	}
-
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
-
-	public String getHueUserName() {
-		return hueUserName;
-	}
-
-	public void setHueUserName(String hueUserName) {
-		this.hueUserName = hueUserName;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
 
 }
