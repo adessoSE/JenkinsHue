@@ -11,15 +11,17 @@ import javax.validation.constraints.NotNull;
 
 import de.adesso.jenkinshue.common.enumeration.Scenario;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * 
  * @author wennier
  *
  */
-@Data
+@Getter
+@Setter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

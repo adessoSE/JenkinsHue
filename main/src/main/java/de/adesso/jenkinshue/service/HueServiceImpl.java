@@ -17,7 +17,6 @@ import javax.annotation.PreDestroy;
 import org.joda.time.DateTime;
 import org.json.hue.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Primary;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -362,7 +361,7 @@ public class HueServiceImpl implements HueService {
 
 	@Override
 	public List<FoundBridgeDTO> findAllBridges() {
-		return new ArrayList<>(Arrays.asList(new TestRestTemplate().getForObject("https://www.meethue.com/api/nupnp", FoundBridgeDTO[].class)));
+		throw new UnsupportedOperationException();
 	}
 
 	private void updateLightStateColor(PHLightState lightState, String lightModelNumber, String colorHex) {

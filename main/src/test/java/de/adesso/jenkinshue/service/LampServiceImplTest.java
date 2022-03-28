@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import de.adesso.jenkinshue.common.dto.job.JobDTO;
 import de.adesso.jenkinshue.common.dto.lamp.LampRenameDTO;
@@ -71,7 +72,7 @@ public class LampServiceImplTest extends TestCase {
 		assertEquals(1, lampService.count());
 		assertEquals(0, lampService.count(-1));
 
-		Lamp lamp = lampRepository.findOne(lampDTO.getId());
+		Lamp lamp = lampRepository.findById(lampDTO.getId()).orElseThrow(NoSuchElementException::new);
 		assertEquals(lamp.getHueUniqueId(), lampDTO.getHueUniqueId());
 	}
 

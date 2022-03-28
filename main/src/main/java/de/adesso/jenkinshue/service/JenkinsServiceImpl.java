@@ -8,8 +8,8 @@ import javax.annotation.PostConstruct;
 
 import org.apache.http.client.ClientProtocolException;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.client.support.BasicAuthenticationInterceptor;
 import org.springframework.stereotype.Service;
 
 import de.adesso.jenkinshue.common.jenkins.dto.JenkinsDTO;
@@ -19,6 +19,7 @@ import de.adesso.jenkinshue.common.jenkins.dto.JenkinsJobDTO;
 import de.adesso.jenkinshue.common.jenkins.dto.JenkinsJobNamesDTO;
 import de.adesso.jenkinshue.common.service.JenkinsService;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * 
@@ -41,11 +42,12 @@ public class JenkinsServiceImpl implements JenkinsService {
 	
 	private static final String API_JSON_TREE = "api/json?tree=";
 	
-	private TestRestTemplate template;
+	private RestTemplate template;
 	
 	@PostConstruct
 	public void init() throws ClientProtocolException, IOException {
-		template = new TestRestTemplate(userName, password);
+		template = new RestTemplate();
+		template.getInterceptors().add(new BasicAuthenticationInterceptor(userName, password));
 	}
 	
 	@Override
