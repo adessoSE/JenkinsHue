@@ -154,7 +154,7 @@ public class TeamServiceImpl implements TeamService {
 
 	@Override
 	public TeamUsersDTO findOne(long id) throws TeamDoesNotExistException {
-		return  teamRepository.findById(id)
+		return teamRepository.findById(id)
 				.map(team -> mapper.map(team, TeamUsersDTO.class))
 				.orElseThrow(() -> new TeamDoesNotExistException(id));
 	}
