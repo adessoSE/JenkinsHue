@@ -22,7 +22,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = {Application.class})
 //@DirtiesContext(classMode = ClassMode.AFTER_CLASS)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class TestCase {
+public abstract class TestCase {
 
 	@Autowired
 	private BridgeRepository bridgeRepository;
