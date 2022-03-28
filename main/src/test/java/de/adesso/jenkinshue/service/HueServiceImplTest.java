@@ -1,21 +1,15 @@
 package de.adesso.jenkinshue.service;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import de.adesso.jenkinshue.common.hue.dto.FoundBridgeDTO;
+import de.adesso.jenkinshue.TestCase;
+import de.adesso.jenkinshue.common.service.HueService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import de.adesso.jenkinshue.TestCase;
-import de.adesso.jenkinshue.common.service.HueService;
-
-import java.util.List;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
- *
  * @author wennier
- *
  */
 public class HueServiceImplTest extends TestCase {
 
@@ -32,13 +26,4 @@ public class HueServiceImplTest extends TestCase {
 		assertFalse(hueService.ipAreEqual(ip2, ip3));
 		assertTrue(hueService.ipAreEqual(ip3, ip4));
 	}
-
-	@Test
-	public void testFindAllBridgesIsModifiable() {
-		List<FoundBridgeDTO> allBridges = hueService.findAllBridges();
-		allBridges.add(new FoundBridgeDTO());
-		allBridges.add(new FoundBridgeDTO());
-		allBridges.remove(0);
-	}
-	
 }
