@@ -69,9 +69,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.headers().cacheControl().disable().and().exceptionHandling()
 			.authenticationEntryPoint(new RestAuthenticationEntryPoint("/")).and()
 
-			/* old: "/bootstrap/**", "/libraries/**", "/scripts/**", "/styles/**" */
-			// TODO update for new ui
-			.authorizeRequests().antMatchers("/", "/login", "/wro/**", "/images/**", "/views/**").permitAll().and()
+			.authorizeRequests().antMatchers("/", "/login").permitAll().and()
 
 			.authorizeRequests().anyRequest().authenticated().and()
 
@@ -156,7 +154,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return (request, response, authentication) -> response.setStatus(HttpServletResponse.SC_OK);
 	}
 
-	class RestAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoint {
+	static class RestAuthenticationEntryPoint extends LoginUrlAuthenticationEntryPoint {
 
 		public RestAuthenticationEntryPoint(String loginURL) {
 			super(loginURL);
