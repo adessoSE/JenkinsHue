@@ -1,7 +1,11 @@
 package de.adesso.jenkinshue;
 
-import de.adesso.jenkinshue.repository.*;
-import lombok.extern.log4j.Log4j2;
+import de.adesso.jenkinshue.repository.BridgeRepository;
+import de.adesso.jenkinshue.repository.JobRepository;
+import de.adesso.jenkinshue.repository.LampRepository;
+import de.adesso.jenkinshue.repository.TeamRepository;
+import de.adesso.jenkinshue.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.runner.RunWith;
@@ -16,7 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @author wennier
  *
  */
-@Log4j2
+@Slf4j
 @ActiveProfiles("h2,secret")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class})

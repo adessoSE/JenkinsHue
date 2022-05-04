@@ -1,18 +1,9 @@
 package de.adesso.jenkinshue;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-
 import de.adesso.jenkinshue.common.dto.job.JobDTO;
 import de.adesso.jenkinshue.common.dto.lamp.LampDTO;
-import de.adesso.jenkinshue.common.dto.lamp.LampHueDTO;
 import de.adesso.jenkinshue.common.dto.lamp.LampDTO.LampDTO_TeamDTO;
+import de.adesso.jenkinshue.common.dto.lamp.LampHueDTO;
 import de.adesso.jenkinshue.common.dto.lamp.LampNameDTO;
 import de.adesso.jenkinshue.common.dto.lamp.LampTurnOffDTO;
 import de.adesso.jenkinshue.common.dto.lamp.LampUpdateLastShownScenarioDTO;
@@ -26,14 +17,22 @@ import de.adesso.jenkinshue.common.service.HueService;
 import de.adesso.jenkinshue.common.service.JenkinsService;
 import de.adesso.jenkinshue.common.service.LampService;
 import de.adesso.jenkinshue.exception.JenkinsJobDoesNotExistException;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static de.adesso.jenkinshue.util.ListUtil.nullSafe;
 
 /**
  * @author wennier
  */
-@Log4j2
+@Slf4j
 @Component
 public class JobListener {
 
@@ -55,13 +54,13 @@ public class JobListener {
 		JenkinsDTO jenkinsDTO = jenkinsService.getJenkins();
 		List<JenkinsJobDTO> jenkinsJobs = jenkinsDTO.getJobs();
 
-		log.debug("Anzahl Jenkins-Jobs: " + jenkinsJobs.size());
+		log.debug("Anzahl Jenkins-Jobs: {}", jenkinsJobs.size());
 
 		List<LampDTO> lamps = lampService.findAll();
-		log.debug("Anzahl Lampen: " + lamps.size());
+		log.debug("Anzahl Lampen: {}", lamps.size());
 
 		List<LampHueDTO> connectedLamps = hueService.findAllLamps();
-		log.debug("Gefundene Lampen: " + connectedLamps.size());
+		log.debug("Gefundene Lampen: {}", connectedLamps.size());
 
 		for (LampDTO lamp : lamps) {
 			updateLamp(lamp, jenkinsJobs, connectedLamps);
@@ -80,7 +79,7 @@ public class JobListener {
 			Scenario highestPrioritizedScenario = null;
 
 			List<JobDTO> jobs = nullSafe(lamp.getJobs());
-			log.debug("Der Lampe " + lamp.getHueUniqueId() + " zugewiesene Jobs: " + jobs.size());
+			log.debug("Der Lampe {} zugewiesene Jobs: {}", lamp.getHueUniqueId(), jobs.size());
 
 			// bestimme das wichtigste Szenario
 			for (JobDTO job : jobs) {
@@ -96,7 +95,7 @@ public class JobListener {
 					}
 				} catch (JenkinsJobDoesNotExistException jjdnee) {
 					if (job.getName().contains("/")) { // it is a job of the NEW jenkins (in a folder)
-						log.error(jjdnee);
+						log.error("Jenkins-Job {} existiert nicht.", job.getName(), jjdnee);
 					}
 				}
 			}
@@ -129,15 +128,15 @@ public class JobListener {
 				}
 
 				if (!highestPrioritizedScenario.equals(lamp.getLastShownScenario())) {
-					log.debug("(priorisiertes) eingetretenes Szenario: " + highestPrioritizedScenario);
-					log.debug("anzuzeigende Konfiguration: " + config);
+					log.debug("(priorisiertes) eingetretenes Szenario: {}", highestPrioritizedScenario);
+					log.debug("anzuzeigende Konfiguration: {}", config);
 					log.debug("Fallback: " + (fallback != null));
 
 					hueService.updateLamp(lamp, config); // wenn (config == null) wird nichts passieren
 				} else if (lampIsOff(lamp, connectedLamps)) { // Lampe wird eingeschaltet
 					log.debug("Lampe wird eingeschaltet :-)");
-					log.debug("(priorisiertes) eingetretenes Szenario: " + highestPrioritizedScenario);
-					log.debug("Fallback: " + (fallback != null));
+					log.debug("(priorisiertes) eingetretenes Szenario: {}", highestPrioritizedScenario);
+					log.debug("Fallback: {}", fallback != null);
 
 					hueService.updateLamp(lamp, config);
 				} else {
@@ -224,7 +223,7 @@ public class JobListener {
 		if (previousState == null || currentState == null) {
 			throw new IllegalArgumentException("previousState oder newState ist null!");
 		} else {
-			return Scenario.valueOf(currentState.toString() + "_AFTER_" + previousState.toString());
+			return Scenario.valueOf(currentState + "_AFTER_" + previousState);
 		}
 	}
 

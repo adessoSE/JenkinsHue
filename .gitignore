@@ -9,6 +9,8 @@
 *.iws
 
 target/
+data/
+logs/
 output.log
 
 cacerts

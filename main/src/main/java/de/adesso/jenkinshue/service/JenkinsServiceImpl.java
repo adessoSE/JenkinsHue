@@ -1,32 +1,28 @@
 package de.adesso.jenkinshue.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-
-import org.apache.http.client.ClientProtocolException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Primary;
-import org.springframework.http.client.support.BasicAuthenticationInterceptor;
-import org.springframework.stereotype.Service;
-
 import de.adesso.jenkinshue.common.jenkins.dto.JenkinsDTO;
 import de.adesso.jenkinshue.common.jenkins.dto.JenkinsFolderOrJobDTO;
 import de.adesso.jenkinshue.common.jenkins.dto.JenkinsFolderStructureDTO;
 import de.adesso.jenkinshue.common.jenkins.dto.JenkinsJobDTO;
 import de.adesso.jenkinshue.common.jenkins.dto.JenkinsJobNamesDTO;
 import de.adesso.jenkinshue.common.service.JenkinsService;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Primary;
+import org.springframework.http.client.support.BasicAuthenticationInterceptor;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
  * @author wennier
  *
  */
-@Log4j2
+@Slf4j
 @Primary
 @Service
 public class JenkinsServiceImpl implements JenkinsService {
@@ -45,7 +41,7 @@ public class JenkinsServiceImpl implements JenkinsService {
 	private RestTemplate template;
 	
 	@PostConstruct
-	public void init() throws ClientProtocolException, IOException {
+	public void init() {
 		template = new RestTemplate();
 		template.getInterceptors().add(new BasicAuthenticationInterceptor(userName, password));
 	}
@@ -64,9 +60,11 @@ public class JenkinsServiceImpl implements JenkinsService {
 	@Override
 	public JenkinsJobNamesDTO getJenkinsJobNames() {
 		JenkinsFolderStructureDTO folderStructure = template.getForObject(jenkinsUrl + API_JSON_TREE + JenkinsFolderStructureDTO.getTreeParameter(), JenkinsFolderStructureDTO.class);
-		log.debug(folderStructure);
+		if (folderStructure != null) {
+			log.debug(folderStructure.toString());
+		}
 		JenkinsJobNamesDTO jobNames = convert(folderStructure);
-		log.debug(jobNames);
+		log.debug(jobNames.toString());
 		return jobNames;
 	}
 	

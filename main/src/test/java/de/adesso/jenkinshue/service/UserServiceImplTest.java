@@ -13,16 +13,18 @@ import de.adesso.jenkinshue.exception.InvalidLoginException;
 import de.adesso.jenkinshue.exception.TeamDoesNotExistException;
 import de.adesso.jenkinshue.exception.UserAlreadyExistsException;
 import de.adesso.jenkinshue.exception.UserDoesNotExistException;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 /**
  * @author wennier
  */
-@Log4j2
+@Slf4j
 @SuppressWarnings("ConstantConditions")
 public class UserServiceImplTest extends TestCase {
 

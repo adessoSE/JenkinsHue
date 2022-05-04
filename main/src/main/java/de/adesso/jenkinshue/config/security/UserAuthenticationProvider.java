@@ -1,7 +1,7 @@
 package de.adesso.jenkinshue.config.security;
 
 import de.adesso.jenkinshue.common.service.UserService;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 /**
  * @author wennier
  */
-@Log4j2
+@Slf4j
 @Component
 public class UserAuthenticationProvider implements AuthenticationProvider {
 
@@ -34,11 +34,11 @@ public class UserAuthenticationProvider implements AuthenticationProvider {
 		log.debug("Prüfen, ob sich der Nutzer in der DB befindet...");
 
 		if (userService.findByLogin(authentication.getName().toLowerCase()) == null) {
-			log.debug("Der Nutzer " + authentication.getName() + " befindet sich nicht in der DB.");
+			log.debug("Der Nutzer {} befindet sich nicht in der DB.", authentication.getName());
 			throw new DisabledException(authentication.getName()); // muss eine AccountStatusException sein!!
 		}
 
-		log.debug("Der Nutzer " + authentication.getName() + " befindet sich in der DB.");
+		log.debug("Der Nutzer {} befindet sich in der DB.", authentication.getName());
 
 		return null; // danach wird Provider gefragt (ldapAuthentication)
 	}

@@ -2,7 +2,7 @@ package de.adesso.jenkinshue.util;
 
 import de.adesso.jenkinshue.config.LdapValue;
 import de.adesso.jenkinshue.entity.User;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.stereotype.Component;
@@ -20,7 +20,7 @@ import java.util.Hashtable;
 /**
  * @author wennier
  */
-@Log4j2
+@Slf4j
 @Component
 @ConditionalOnBean(LdapValue.class)
 public class LDAPManager implements Serializable {
@@ -65,7 +65,7 @@ public class LDAPManager implements Serializable {
 			ctx.close();
 			return user;
 		} catch (Exception e) {
-			log.info("Login " + login + " nicht gefunden!");
+			log.info("Login {} nicht gefunden!", login);
 		}
 		return null;
 	}

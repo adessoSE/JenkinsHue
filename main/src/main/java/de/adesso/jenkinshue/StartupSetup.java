@@ -1,14 +1,5 @@
 package de.adesso.jenkinshue;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.PostConstruct;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import de.adesso.jenkinshue.common.dto.bridge.BridgeDTO;
 import de.adesso.jenkinshue.common.dto.team.TeamCreateDTO;
 import de.adesso.jenkinshue.common.dto.team.TeamLampsDTO;
@@ -23,12 +14,19 @@ import de.adesso.jenkinshue.common.service.UserService;
 import de.adesso.jenkinshue.exception.InvalidLoginException;
 import de.adesso.jenkinshue.exception.UserAlreadyExistsException;
 import de.adesso.jenkinshue.repository.TeamRepository;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author wennier
  */
-@Log4j2
+@Slf4j
 @Component
 public class StartupSetup {
 
@@ -73,7 +71,7 @@ public class StartupSetup {
 						anAdmin = tmp;
 					}
 				} catch (UserAlreadyExistsException | InvalidLoginException e) {
-					log.error(e);
+					log.error("Fehler beim Anlegen des Benutzers '{}'.", admin, e);
 				}
 			}
 

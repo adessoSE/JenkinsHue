@@ -1,26 +1,5 @@
 package de.adesso.jenkinshue.service;
 
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-
-import org.joda.time.DateTime;
-import org.json.hue.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Service;
-
 import com.philips.lighting.hue.sdk.PHAccessPoint;
 import com.philips.lighting.hue.sdk.PHHueSDK;
 import com.philips.lighting.hue.sdk.PHMessageType;
@@ -33,7 +12,6 @@ import com.philips.lighting.model.PHHueParsingError;
 import com.philips.lighting.model.PHLight;
 import com.philips.lighting.model.PHLight.PHLightAlertMode;
 import com.philips.lighting.model.PHLightState;
-
 import de.adesso.jenkinshue.Scheduler;
 import de.adesso.jenkinshue.common.dto.bridge.BridgeDTO;
 import de.adesso.jenkinshue.common.dto.lamp.LampHueDTO;
@@ -47,14 +25,32 @@ import de.adesso.jenkinshue.common.service.HueService;
 import de.adesso.jenkinshue.constant.HueConstants;
 import de.adesso.jenkinshue.entity.Bridge;
 import de.adesso.jenkinshue.repository.BridgeRepository;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
+import org.joda.time.DateTime;
+import org.json.hue.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import static de.adesso.jenkinshue.util.ListUtil.nullSafe;
 
 /**
  * @author wennier
  */
-@Log4j2
+@Slf4j
 @Primary
 @Service
 public class HueServiceImpl implements HueService {
@@ -102,12 +98,12 @@ public class HueServiceImpl implements HueService {
 	}
 
 	private void updateState(PHBridge bridge, String state) {
-		log.debug("updateState(" + removePortAndToLowerCase(bridge.getResourceCache().getBridgeConfiguration().getIpAddress()) + ", " + state + ") [bridge]");
+		log.debug("updateState({}, {}) [bridge]", removePortAndToLowerCase(bridge.getResourceCache().getBridgeConfiguration().getIpAddress()), state);
 		bridgeStates.put(removePortAndToLowerCase(bridge.getResourceCache().getBridgeConfiguration().getIpAddress()), state);
 	}
 
 	private void updateState(String ip, String state) {
-		log.debug("updateState(" + removePortAndToLowerCase(ip) + ", " + state + ") [ip]");
+		log.debug("updateState({}, {}) [ip]", removePortAndToLowerCase(ip), state);
 		bridgeStates.put(removePortAndToLowerCase(ip), state);
 	}
 
@@ -123,14 +119,14 @@ public class HueServiceImpl implements HueService {
 			@Override
 			public void onAuthenticationRequired(PHAccessPoint accessPoint) {
 				phHueSDK.startPushlinkAuthentication(accessPoint);
-				log.debug("onAuthenticationRequired(" + accessPoint.getIpAddress() + ")"); // IP ohne Port
+				log.debug("onAuthenticationRequired({})", accessPoint.getIpAddress()); // IP ohne Port
 				updateState(accessPoint.getIpAddress(), PRESS_PUSH_LINK_BUTTON);
 			}
 
 			@Override
 			public void onBridgeConnected(PHBridge bridge, String username) {
 				String bridgeIpWithoutPort = removePortAndToLowerCase(bridge.getResourceCache().getBridgeConfiguration().getIpAddress());
-				log.debug("onBridgeConnected(" + bridgeIpWithoutPort + ", " + username + ")");
+				log.debug("onBridgeConnected({}, {})", bridgeIpWithoutPort, username);
 
 				bridges.add(bridge);
 				updateState(bridge, CONNECTED);
@@ -161,7 +157,7 @@ public class HueServiceImpl implements HueService {
 
 			@Override
 			public void onError(int code, final String message) {
-				log.debug(message + " " + code);
+				log.debug("{} {}", message, code);
 
 				if (code == PHHueError.BRIDGE_NOT_RESPONDING) {
 					log.debug("BRIDGE_NOT_RESPONDING");
@@ -182,7 +178,7 @@ public class HueServiceImpl implements HueService {
 			@Override
 			public void onParsingErrors(List<PHHueParsingError> parsingErrorsList) {
 				for (PHHueParsingError parsingError : parsingErrorsList) {
-					log.debug("ParsingError : " + parsingError.getMessage());
+					log.debug("ParsingError: {}", parsingError.getMessage());
 				}
 			}
 		};
@@ -265,10 +261,10 @@ public class HueServiceImpl implements HueService {
 		float oldY = oldLightState.getY();
 
 		log.debug("---- old light state: -------");
-		log.debug("x: " + oldLightState.getX());
-		log.debug("y: " + oldLightState.getY());
-		log.debug("on: " + oldLightState.isOn());
-		log.debug("brightness: " + oldLightState.getBrightness());
+		log.debug("x: {}", oldLightState.getX());
+		log.debug("y: {}", oldLightState.getY());
+		log.debug("on: {}", oldLightState.isOn());
+		log.debug("brightness: {}", oldLightState.getBrightness());
 		log.debug("-----------------------------");
 
 		PHLightState lightState = new PHLightState();
@@ -290,7 +286,7 @@ public class HueServiceImpl implements HueService {
 					try {
 						Thread.sleep(1333);
 					} catch (InterruptedException e) {
-						log.error(e);
+						log.error("Fehler während der Aktualisierung einer Leuchte.", e);
 					}
 				}
 			}
@@ -313,10 +309,10 @@ public class HueServiceImpl implements HueService {
 		bridge.updateLightState(light, lightState);
 
 		log.debug("---- new light state: -------");
-		log.debug("x: " + lightState.getX());
-		log.debug("y: " + lightState.getY());
-		log.debug("on: " + lightState.isOn());
-		log.debug("brightness: " + lightState.getBrightness());
+		log.debug("x: {}", lightState.getX());
+		log.debug("y: {}", lightState.getY());
+		log.debug("on: {}", lightState.isOn());
+		log.debug("brightness: {}", lightState.getBrightness());
 		log.debug("-----------------------------");
 	}
 
