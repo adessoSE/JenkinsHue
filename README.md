@@ -118,7 +118,7 @@ version: '3'
 services:
   jh-backend:
     restart: always
-    image: fi3te/jenkins-hue:version-2.0.0
+    image: fi3te/jenkins-hue:version-2.1.0
     container_name: jh-backend
     environment:
      - "TZ=Europe/Berlin"
@@ -143,7 +143,7 @@ services:
      - app-network
   jh-frontend:
     restart: always
-    image: fi3te/jenkins-hue-ui:version-2.0.0
+    image: fi3te/jenkins-hue-ui:version-2.1.0
     container_name: jh-frontend
     expose:
      - "80"
@@ -174,7 +174,7 @@ services:
      - app-network
   jh-backend:
     restart: always
-    image: fi3te/jenkins-hue:version-2.0.0
+    image: fi3te/jenkins-hue:version-2.1.0
     container_name: jh-backend
     environment:
      - "TZ=Europe/Berlin"
@@ -203,7 +203,7 @@ services:
      - app-network
   jh-frontend:
     restart: always
-    image: fi3te/jenkins-hue-ui:version-2.0.0
+    image: fi3te/jenkins-hue-ui:version-2.1.0
     container_name: jh-frontend
     expose:
      - "80"
